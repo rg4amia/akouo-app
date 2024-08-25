@@ -1,0 +1,9 @@
+.fixed-header {
+ position: fixed;
+ top: 0;
+ left: 10px;
+ right: 0;
+ z-index: 1000;
+ background-color: #ffffff;
+ /* Ajoutez la couleur de fond souhaitée */
+}

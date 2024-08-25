@@ -6,10 +6,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -20,6 +21,16 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'telephone',
+        'note',
+        'enregistre',
+        'indicatif',
+        'active',
+        'pay_id',
+        'cellule_id',
+        'type_utilisateur_id',
+        'entite_origine_id',
+        'status_user_id'
     ];
 
     /**
@@ -43,5 +54,40 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function entiteaffecte()
+    {
+        return $this->belongsToMany(Entite::class);
+    }
+
+    public function pays()
+    {
+        return $this->belongsTo(Pays::class, 'pay_id', 'id');
+    }
+
+    public function cellule()
+    {
+        return $this->belongsTo(Entite::class, 'cellule_id', 'id');
+    }
+
+    public function predicateur()
+    {
+        return $this->belongsTo(Predicateur::class, 'id', 'user_id');
+    }
+
+    public function typeutilisateur()
+    {
+        return $this->belongsTo(TypeUtilisateur::class, 'type_utilisateur_id', 'id');
+    }
+
+    public function entiteorigine()
+    {
+        return $this->belongsTo(Entite::class, 'entite_origine_id', 'id');
+    }
+
+    public function statususer()
+    {
+        return $this->belongsTo(StatusUser::class, 'status_user_id', 'id');
     }
 }
