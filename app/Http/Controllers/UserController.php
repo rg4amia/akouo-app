@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\RoleResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\DataTableFetchService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -14,18 +15,18 @@ class UserController extends Controller
 {
     protected UserService $userService;
     public $loadDefault = 10;
+    protected dataTableFetchService $dt;
 
-    public function __construct(UserService $userService)
+    public function __construct(UserService $userService, DataTableFetchService $dt)
     {
         $this->userService = $userService;
+        $this->dt = $dt;
     }
-
-
-
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         $users = (
             UserResource::collection(User::paginate($request->load))
         )->additional([
@@ -75,30 +76,11 @@ class UserController extends Controller
      */
     public function create(Request $request)
     {
-        $search = $request->input('search');
-        $perPage = $request->input('perPage', 10);
-        $sortField = $request->input('sort')['field'] ?? 'id';
-        $sortDirection = $request->input('sort')['direction'] ?? 'asc';
-
-        $query = User::query();
-
-        if ($search) {
-            $query->where('name', 'like', '%' . $search . '%')
-                ->orWhere('email', 'like', '%' . $search . '%');
+        $users = User::orderBy('nom', 'ASC');
+        
+        if ($request->ajax()) {
+            return $this->dt->fetchUser($request, $users);
         }
-
-        $data = $query->orderBy($sortField, $sortDirection)
-            ->paginate($perPage)
-            ->appends([
-                'search' => $search,
-                'perPage' => $perPage,
-                'sort' => compact('sortField', 'sortDirection'),
-            ]);
-
-        return response()->json([
-            'data' => $data->items(),
-            'links' => $data->links()->elements[0]
-        ]);
     }
 
     /**

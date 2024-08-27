@@ -1,45 +1,65 @@
 import Footer from "@/Components/Footer";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import BaseLayout from "@/Layouts/BaseLayout";
 import DataTable from "./Partials/DataTable";
-import { useForm, usePage } from "@inertiajs/react";
-import { debounce, pickBy } from "lodash";
+import { Head, useForm, usePage } from "@inertiajs/react";
+import debounce from "lodash.debounce";
+import pickBy from "lodash.debounce";
+import { Link } from "lucide-react";
+//import { debounce, pickBy } from "lodash";
 //import DataTable from "./Partials/DataTable";
+import DataTable from 'datatables.net-react';
+import DT from 'datatables.net-dt';
+
+DataTable.use(DT);
 
 export default function UserIndex({ auth, data, links, filters }) {
-    /* const openModal = document.getElementById("openModal");
-    const closeModal = document.getElementById("closeModal");
-    const userModal = document.getElementById("userModal");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
 
-    openModal.addEventListener("click", () => {
-        userModal.classList.remove("hidden");
-    });
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
 
-    closeModal.addEventListener("click", () => {
-        userModal.classList.add("hidden");
-    }); */
-    const {get, processing, errors, reset } = useForm();
+    const { get, processing, errors, reset } = useForm();
     const [state, setState] = useState(true);
-    const { data: people, meta, filtered, attributes } = props.users;
-    const [params, setParams] = useState(filtered)
-    const [pageNumber, setPageNumber] = useState([])
+
+/*
+    const { data: people, meta, filtered, attributes } = usePage().props;
+    const [params, setParams] = useState(filtered);
+    const [pageNumber, setPageNumber] = useState([]);
 
     const reload = useCallback(
         debounce((query) => {
-            get(
-                route('users.index'),
-                pickBy(query),
-                {
-                    preserveState:true
-                }
-            )
-        }, 150)
-        ,
-      [],
+            get(route("users.index"), pickBy(query), {
+                preserveState: true,
+            });
+        }, 150),
+        []
     );
+
+    useEffect(() => reload(params), [params]);
+
+    useEffect(() => {
+        let numbers = [];
+        for (
+            let i = attributes.per_page;
+            i <= meta.total / attributes.per_page;
+            i = i + attributes.per_page
+        ) {
+            numbers.push(i);
+        }
+        setPageNumber(numbers);
+    }, []);
+
+    const onChange = (event) =>
+        setParams({ ...params, [event.target.name]: event.target.value }); */
 
     return (
         <BaseLayout state={state} auth={auth}>
+            <Head title="Gestion des Utilisateurs"/>
             <div className="flex flex-col items-start m-4" role="group">
                 <div className="flex flex-row justify-between items-center w-full">
                     <div>
@@ -61,7 +81,7 @@ export default function UserIndex({ auth, data, links, filters }) {
                     <div className="gap-6">
                         <button
                             className="relative rounded-lg bg-blueVh w-full overflow-hidden flex flex-col items-start justify-start py-2 px-4 box-border cursor-pointer text-left text-[12px] text-white font-outfit"
-                            id="openModal"
+                            id="openModal" onClick={openModal}
                         >
                             <div className="flex flex-row items-center justify-start gap-2">
                                 <div className="bg-white rounded-md">
@@ -106,46 +126,23 @@ export default function UserIndex({ auth, data, links, filters }) {
                     </div>
                 </div>
 
-              {/*   <DataTable/> */}
+                {/*<DataTable/>*/}
 
-              <div className="mb-4 flex justify-between items-center">
-                <input
-                    type="text"
-                    placeholder="Search..."
-                    value={search}
-                    onChange={handleSearch}
-                    className="px-4 py-2 border rounded"
-                />
-                <select
-                    value={perPage}
-                    onChange={handlePerPage}
-                    className="px-4 py-2 border rounded"
-                >
-                    <option value="10">10 per page</option>
-                    <option value="25">25 per page</option>
-                    <option value="50">50 per page</option>
-                </select>
-            </div>
+                <DataTable ajax={get(route('user.create'))} columns={columns} className="display">
+                    <thead>
+                        <tr>
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th>Office</th>
+                        <th>Extn.</th>
+                        <th>Start date</th>
+                        <th>Salary</th>
+                        </tr>
+                    </thead>
+                </DataTable>
 
-              <DataTable
-                data={users.data}
-                columns={columns}
-                sortColumn={sort}
-                sortDirection={direction}
-                onSort={handleSort}
-            />
-            <div className="mt-4 flex justify-between items-center">
-                {users.links.map((link, index) => (
-                    <button
-                        key={index}
-                        onClick={() => Inertia.visit(link.url)}
-                        className={`px-4 py-2 border rounded ${
-                            link.active ? 'bg-blue-500 text-white' : 'bg-white text-blue-500'
-                        }`}
-                        dangerouslySetInnerHTML={{ __html: link.label }}
-                    />
-                ))}
-            </div>
+
+                {/*<DataTable/>*/}
 
                 {/* <div className="w-full bg-base-white max-w-full flex flex-row flex-wrap items-center justify-center py-3 gap-3 border mt-2 rounded-lg tracking-[normal] text-left text-xs text-gray-mid-description font-outfit">
                     <div className="relative text-[16px] font-medium text-black px-4">
@@ -556,287 +553,300 @@ export default function UserIndex({ auth, data, links, filters }) {
                 </div> */}
             </div>
             {/* start modal */}
-            <div
-                id="userModal"
-                className="fixed hidden z-50 inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full px-4 "
-            >
-                <div className="relative top-3 mx-auto shadow-xl rounded-3xl  bg-white w-1/3">
-                    <div className="flex justify-end p-2">
-                        <button
-                            id="closeModal"
-                            type="button"
-                            className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
-                        >
-                            <svg
-                                className="w-5 h-5"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg"
+
+            {isModalOpen && (
+                <div
+                    id="userModal"
+                    className="fixed z-50 inset-0 bg-gray-900 bg-opacity-30 backdrop-blur-sm overflow-y-auto h-full px-4"
+                >
+                    <div className="relative top-3 mx-auto shadow-xl rounded-3xl  bg-white w-1/3">
+                        <div className="flex justify-end p-2">
+                            <button
+                                id="closeModal"
+                                onClick={closeModal}
+                                type="button"
+                                className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
                             >
-                                <path
-                                    fillRule="evenodd"
-                                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                                    clipRule="evenodd"
-                                ></path>
-                            </svg>
-                        </button>
-                    </div>
-
-                    <div className="p-6 pt-0">
-                        {/* Content Modal */}
-
-                        {/* Header */}
-                        <div className="flex flex-col items-start justify-start text-[24px] mb-4">
-                            <div className="flex flex-row items-center justify-start gap-2">
-                                <img
-                                    className="w-6 h-6"
-                                    alt=""
-                                    src="./assets/icons/user-circle.svg"
-                                />
-                                <div className="relative font-semibold text-blueVh">
-                                    Ajouter un utilisateur
-                                </div>
-                            </div>
-                            <div className="text-[12px] text-grayish-middle">
-                                Remplissez les informations de l’utilisateur et
-                                confirmez
-                            </div>
+                                <svg
+                                    className="w-5 h-5"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        fillRule="evenodd"
+                                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                        clipRule="evenodd"
+                                    ></path>
+                                </svg>
+                            </button>
                         </div>
 
-                        {/* Form Fields */}
-                        <div className="flex flex-col gap-4 text-gray">
-                            {/* Profile Image */}
-                            <div className="flex flex-row items-center justify-center relative gap-2.5">
-                                <img
-                                    className="w-20 h-20 z-0"
-                                    alt=""
-                                    src="./assets/icons/ellipse-cricle.svg"
-                                />
-                                <img
-                                    className="w-8 h-8 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-                                    alt=""
-                                    src="./assets/icons/camera-alt.svg"
-                                />
-                            </div>
+                        <div className="p-6 pt-0">
+                            {/* Content Modal */}
 
-                            {/*  Name and Surname */}
-                            <div className="flex flex-row gap-3">
-                                <div className="flex flex-col gap-1">
-                                    <label htmlFor="nom" className="font-bold">
-                                        Nom*
-                                    </label>
-                                    <input
-                                        id="nom"
-                                        type="text"
-                                        placeholder="Ecrivez le nom ici"
-                                        className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
+                            {/* Header */}
+                            <div className="flex flex-col items-start justify-start text-[24px] mb-4">
+                                <div className="flex flex-row items-center justify-start gap-2">
+                                    <img
+                                        className="w-6 h-6"
+                                        alt=""
+                                        src="./assets/icons/user-circle.svg"
                                     />
+                                    <div className="relative font-semibold text-blueVh">
+                                        Ajouter un utilisateur
+                                    </div>
                                 </div>
-                                <div className="flex flex-col gap-1">
-                                    <label
-                                        htmlFor="prenom"
-                                        className="font-bold"
-                                    >
-                                        Prénoms*
-                                    </label>
-                                    <input
-                                        id="prenom"
-                                        type="text"
-                                        placeholder="Ecrivez le/les prénoms ici"
-                                        className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
+                                <div className="text-[12px] text-grayish-middle">
+                                    Remplissez les informations de l’utilisateur
+                                    et confirmez
+                                </div>
+                            </div>
+
+                            {/* Form Fields */}
+                            <div className="flex flex-col gap-4 text-gray">
+                                {/* Profile Image */}
+                                <div className="flex flex-row items-center justify-center relative gap-2.5">
+                                    <img
+                                        className="w-20 h-20 z-0"
+                                        alt=""
+                                        src="./assets/icons/ellipse-cricle.svg"
                                     />
-                                </div>
-                            </div>
-
-                            {/* User Type and Category */}
-                            <div className="flex flex-row gap-3">
-                                <div className="flex flex-col gap-1">
-                                    <label
-                                        htmlFor="typeUtilisateur"
-                                        className="font-bold"
-                                    >
-                                        Type d’utilisateur*
-                                    </label>
-                                    <select
-                                        id="typeUtilisateur"
-                                        className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
-                                    >
-                                        <option>Ecouteur</option>
-                                        <option>Noteur</option>
-                                        <option>Gestionnaire</option>
-                                    </select>
-                                </div>
-
-                                <div className="flex flex-col gap-1">
-                                    <label
-                                        htmlFor="categorieUtilisateur"
-                                        className="font-bold"
-                                    >
-                                        Catégorie d’utilisateur*
-                                    </label>
-                                    <select
-                                        id="categorieUtilisateur"
-                                        className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
-                                    >
-                                        <option>User</option>
-                                        <option>Admin</option>
-                                        <option>Super Admin</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            {/* Phone Number and Email */}
-                            <div className="flex flex-row gap-3">
-                                <div className="flex flex-col gap-1">
-                                    <label
-                                        htmlFor="telephone"
-                                        className="font-bold"
-                                    >
-                                        Numéro de téléphone*
-                                    </label>
-                                    <input
-                                        id="telephone"
-                                        type="tel"
-                                        placeholder="+225 01 02 03 45 67"
-                                        className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
+                                    <img
+                                        className="w-8 h-8 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                                        alt=""
+                                        src="./assets/icons/camera-alt.svg"
                                     />
                                 </div>
 
-                                <div className="flex flex-col gap-1">
-                                    <label
-                                        htmlFor="email"
-                                        className="font-bold"
-                                    >
-                                        Email*
-                                    </label>
-                                    <input
-                                        id="email"
-                                        type="email"
-                                        placeholder="josianne.kone@gmail.com"
-                                        className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Password */}
-                            <div className="flex flex-col gap-1">
-                                <label htmlFor="password" className="font-bold">
-                                    Mot de passe*
-                                </label>
-                                <input
-                                    id="password"
-                                    type="password"
-                                    placeholder="******"
-                                    className="w-[472px] p-3 rounded-lg border-2 border-stroke-bulto"
-                                />
-                            </div>
-
-                            {/*  Country, Origin Entity, Cell, Assigned Entities, and Status */}
-
-                            <div className="flex flex-row gap-3">
-                                <div className="flex flex-col gap-1">
-                                    <label htmlFor="pays" className="font-bold">
-                                        Pays*
-                                    </label>
-                                    <select
-                                        id="pays"
-                                        className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
-                                    >
-                                        <option>Côte d'Ivoire</option>
-                                    </select>
-                                </div>
-
-                                <div className="flex flex-col gap-1">
-                                    <label
-                                        htmlFor="entiteOrigine"
-                                        className="font-bold"
-                                    >
-                                        Entité d’origine*
-                                    </label>
-                                    <select
-                                        id="entiteOrigine"
-                                        className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
-                                    >
-                                        <option>Centre Kodesh</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-row gap-3">
-                                <div className="flex flex-col gap-1">
-                                    <label
-                                        htmlFor="cellule"
-                                        className="font-bold"
-                                    >
-                                        Cellule*
-                                    </label>
-                                    <select
-                                        id="cellule"
-                                        className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
-                                    >
-                                        <option>Djiby 8</option>
-                                    </select>
-                                </div>
-
-                                <div className="flex flex-col gap-1">
-                                    <label
-                                        htmlFor="statut"
-                                        className="font-bold"
-                                    >
-                                        Statut
-                                    </label>
-                                    <select
-                                        id="statut"
-                                        className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
-                                    >
-                                        <option>En attente</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col">
+                                {/*  Name and Surname */}
                                 <div className="flex flex-row gap-3">
                                     <div className="flex flex-col gap-1">
                                         <label
-                                            htmlFor="entitesAffectees"
+                                            htmlFor="nom"
                                             className="font-bold"
                                         >
-                                            Entité(s) affectée(s)*
+                                            Nom*
                                         </label>
-                                        <div className="flex flex-row flex-wrap gap-1 p-3 rounded-lg border-2 border-stroke-bulto">
-                                            <span className="bg-light-stroke py-0.5 px-2 rounded-8xs">
-                                                Angré 9
-                                            </span>
-                                            <span className="bg-light-stroke py-0.5 px-2 rounded-8xs">
-                                                Angré 8-2
-                                            </span>
+                                        <input
+                                            id="nom"
+                                            type="text"
+                                            placeholder="Ecrivez le nom ici"
+                                            className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col gap-1">
+                                        <label
+                                            htmlFor="prenom"
+                                            className="font-bold"
+                                        >
+                                            Prénoms*
+                                        </label>
+                                        <input
+                                            id="prenom"
+                                            type="text"
+                                            placeholder="Ecrivez le/les prénoms ici"
+                                            className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* User Type and Category */}
+                                <div className="flex flex-row gap-3">
+                                    <div className="flex flex-col gap-1">
+                                        <label
+                                            htmlFor="typeUtilisateur"
+                                            className="font-bold"
+                                        >
+                                            Type d’utilisateur*
+                                        </label>
+                                        <select
+                                            id="typeUtilisateur"
+                                            className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
+                                        >
+                                            <option>Ecouteur</option>
+                                            <option>Noteur</option>
+                                            <option>Gestionnaire</option>
+                                        </select>
+                                    </div>
+
+                                    <div className="flex flex-col gap-1">
+                                        <label
+                                            htmlFor="categorieUtilisateur"
+                                            className="font-bold"
+                                        >
+                                            Catégorie d’utilisateur*
+                                        </label>
+                                        <select
+                                            id="categorieUtilisateur"
+                                            className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
+                                        >
+                                            <option>User</option>
+                                            <option>Admin</option>
+                                            <option>Super Admin</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {/* Phone Number and Email */}
+                                <div className="flex flex-row gap-3">
+                                    <div className="flex flex-col gap-1">
+                                        <label
+                                            htmlFor="telephone"
+                                            className="font-bold"
+                                        >
+                                            Numéro de téléphone*
+                                        </label>
+                                        <input
+                                            id="telephone"
+                                            type="tel"
+                                            placeholder="+225 01 02 03 45 67"
+                                            className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
+                                        />
+                                    </div>
+
+                                    <div className="flex flex-col gap-1">
+                                        <label
+                                            htmlFor="email"
+                                            className="font-bold"
+                                        >
+                                            Email*
+                                        </label>
+                                        <input
+                                            id="email"
+                                            type="email"
+                                            placeholder="josianne.kone@gmail.com"
+                                            className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Password */}
+                                <div className="flex flex-col gap-1">
+                                    <label
+                                        htmlFor="password"
+                                        className="font-bold"
+                                    >
+                                        Mot de passe*
+                                    </label>
+                                    <input
+                                        id="password"
+                                        type="password"
+                                        placeholder="******"
+                                        className="w-[472px] p-3 rounded-lg border-2 border-stroke-bulto"
+                                    />
+                                </div>
+
+                                {/*  Country, Origin Entity, Cell, Assigned Entities, and Status */}
+
+                                <div className="flex flex-row gap-3">
+                                    <div className="flex flex-col gap-1">
+                                        <label
+                                            htmlFor="pays"
+                                            className="font-bold"
+                                        >
+                                            Pays*
+                                        </label>
+                                        <select
+                                            id="pays"
+                                            className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
+                                        >
+                                            <option>Côte d'Ivoire</option>
+                                        </select>
+                                    </div>
+
+                                    <div className="flex flex-col gap-1">
+                                        <label
+                                            htmlFor="entiteOrigine"
+                                            className="font-bold"
+                                        >
+                                            Entité d’origine*
+                                        </label>
+                                        <select
+                                            id="entiteOrigine"
+                                            className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
+                                        >
+                                            <option>Centre Kodesh</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-row gap-3">
+                                    <div className="flex flex-col gap-1">
+                                        <label
+                                            htmlFor="cellule"
+                                            className="font-bold"
+                                        >
+                                            Cellule*
+                                        </label>
+                                        <select
+                                            id="cellule"
+                                            className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
+                                        >
+                                            <option>Djiby 8</option>
+                                        </select>
+                                    </div>
+
+                                    <div className="flex flex-col gap-1">
+                                        <label
+                                            htmlFor="statut"
+                                            className="font-bold"
+                                        >
+                                            Statut
+                                        </label>
+                                        <select
+                                            id="statut"
+                                            className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
+                                        >
+                                            <option>En attente</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col">
+                                    <div className="flex flex-row gap-3">
+                                        <div className="flex flex-col gap-1">
+                                            <label
+                                                htmlFor="entitesAffectees"
+                                                className="font-bold"
+                                            >
+                                                Entité(s) affectée(s)*
+                                            </label>
+                                            <div className="flex flex-row flex-wrap gap-1 p-3 rounded-lg border-2 border-stroke-bulto">
+                                                <span className="bg-light-stroke py-0.5 px-2 rounded-8xs">
+                                                    Angré 9
+                                                </span>
+                                                <span className="bg-light-stroke py-0.5 px-2 rounded-8xs">
+                                                    Angré 8-2
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="flex flex-row w-full gap-2">
-                                <button className="w-full relative [filter:drop-shadow(0px_1px_2px_rgba(0,_0,_0,_0.08))] rounded-lg border-gray-unselected border-[2px] border-solid box-border flex flex-row items-center justify-center py-3 px-6 text-left text-[16px] text-gray-unselected font-outfit">
-                                    <div
-                                        className="relative font-semibold cursor-pointer"
-                                        id="annulerText"
-                                    >
-                                        Annuler
-                                    </div>
-                                </button>
-                                <button className="w-full relative shadow-[0px_1px_2px_rgba(0,_0,_0,_0.08)] rounded-lg bg-blueVh flex flex-row items-center justify-center py-3 px-6 box-border text-left text-[16px] text-white font-outfit">
-                                    <div
-                                        className="relative font-semibold cursor-pointer"
-                                        id="enregistrerText"
-                                    >
-                                        Enregistrer
-                                    </div>
-                                </button>
+                                <div className="flex flex-row w-full gap-2">
+                                    <button className="w-full relative [filter:drop-shadow(0px_1px_2px_rgba(0,_0,_0,_0.08))] rounded-lg border-gray-unselected border-[2px] border-solid box-border flex flex-row items-center justify-center py-3 px-6 text-left text-[16px] text-gray-unselected font-outfit">
+                                        <div
+                                            className="relative font-semibold cursor-pointer"
+                                            id="annulerText"
+                                        >
+                                            Annuler
+                                        </div>
+                                    </button>
+                                    <button className="w-full relative shadow-[0px_1px_2px_rgba(0,_0,_0,_0.08)] rounded-lg bg-blueVh flex flex-row items-center justify-center py-3 px-6 box-border text-left text-[16px] text-white font-outfit">
+                                        <div
+                                            className="relative font-semibold cursor-pointer"
+                                            id="enregistrerText"
+                                        >
+                                            Enregistrer
+                                        </div>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    {/* end modal */}
                 </div>
-                {/* end modal */}
-            </div>
+            )}
         </BaseLayout>
     );
 }

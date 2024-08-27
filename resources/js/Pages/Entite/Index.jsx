@@ -13,10 +13,10 @@ export default function RecordInd({ auth, record }) {
         setIsModalOpen(false);
     };
 
-    const [state, setState] = useState(false);
+    const [state, setState] = useState(true);
 
     return (
-        <BaseLayout auth={auth} state={true}>
+        <BaseLayout auth={auth} state={state}>
             <div className="flex flex-col items-start m-4" role="group">
                 <div className="flex flex-row justify-between items-center w-full">
                     <div>
@@ -271,7 +271,7 @@ export default function RecordInd({ auth, record }) {
             {/* start modal */}
              {isModalOpen && ( <div
                 id="userModal"
-                className="fixed z-50 inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full px-4 "
+                className="fixed z-50 inset-0 bg-gray-900 backdrop-blur-sm bg-opacity-60 overflow-y-auto h-full px-4 "
             >
                 <div className="relative top-3 mx-auto shadow-xl rounded-3xl  bg-white w-1/3">
                     <div className="flex justify-end p-2">
