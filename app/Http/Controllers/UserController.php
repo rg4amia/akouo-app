@@ -28,7 +28,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $users = (
-            UserResource::collection(User::paginate($request->load))
+            UserResource::collection(User::get())
         )->additional([
             'attributes' => [
                 'total' => User::count(),
@@ -76,11 +76,15 @@ class UserController extends Controller
      */
     public function create(Request $request)
     {
-        $users = User::orderBy('nom', 'ASC');
-        
-        if ($request->ajax()) {
+        $users = User::orderBy('name', 'ASC')->get();
+
+        //dd($request->all());
+
+        /* if ($request->ajax()) {
             return $this->dt->fetchUser($request, $users);
-        }
+        } */
+
+        return response()->json($users);
     }
 
     /**

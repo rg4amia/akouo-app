@@ -1,19 +1,15 @@
 import Footer from "@/Components/Footer";
 import { useCallback, useEffect, useState } from "react";
 import BaseLayout from "@/Layouts/BaseLayout";
-import DataTable from "./Partials/DataTable";
 import { Head, useForm, usePage } from "@inertiajs/react";
-import debounce from "lodash.debounce";
-import pickBy from "lodash.debounce";
 import { Link } from "lucide-react";
-//import { debounce, pickBy } from "lodash";
-//import DataTable from "./Partials/DataTable";
 import DataTable from 'datatables.net-react';
 import DT from 'datatables.net-dt';
+//import '../App.scss';
 
 DataTable.use(DT);
 
-export default function UserIndex({ auth, data, links, filters }) {
+export default function UserIndex({ auth, data, users, links, filters }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const openModal = () => {
         setIsModalOpen(true);
@@ -26,36 +22,20 @@ export default function UserIndex({ auth, data, links, filters }) {
     const { get, processing, errors, reset } = useForm();
     const [state, setState] = useState(true);
 
-/*
-    const { data: people, meta, filtered, attributes } = usePage().props;
-    const [params, setParams] = useState(filtered);
-    const [pageNumber, setPageNumber] = useState([]);
 
-    const reload = useCallback(
-        debounce((query) => {
-            get(route("users.index"), pickBy(query), {
-                preserveState: true,
-            });
-        }, 150),
-        []
-    );
-
-    useEffect(() => reload(params), [params]);
+    const [tableData, setTableData] = useState();
 
     useEffect(() => {
-        let numbers = [];
-        for (
-            let i = attributes.per_page;
-            i <= meta.total / attributes.per_page;
-            i = i + attributes.per_page
-        ) {
-            numbers.push(i);
-        }
-        setPageNumber(numbers);
-    }, []);
+        console.log(users.data);
+        setTableData(users.data);
+    },[])
 
-    const onChange = (event) =>
-        setParams({ ...params, [event.target.name]: event.target.value }); */
+    const columns = [
+    { data: 'name' },
+    { data: 'email' },
+    { data: 'telephone' },
+    ];
+
 
     return (
         <BaseLayout state={state} auth={auth}>
@@ -128,16 +108,19 @@ export default function UserIndex({ auth, data, links, filters }) {
 
                 {/*<DataTable/>*/}
 
-                <DataTable ajax={get(route('user.create'))} columns={columns} className="display">
+                <DataTable columns={columns} data={tableData} className="min-w-full bg-white border-t mt-1">
                     <thead>
-                        <tr>
-                        <th>Name</th>
-                        <th>Position</th>
-                        <th>Office</th>
-                        <th>Extn.</th>
-                        <th>Start date</th>
-                        <th>Salary</th>
-                        </tr>
+                         <tr className="text-xs border-b">
+                                <th className="py-3 px-6 text-left border-r">
+                                    NOM, Prénoms
+                                </th>
+                                <th className="py-3 px-6 text-left border-r">
+                                    Email
+                                </th>
+                                <th className="py-3 px-6 text-left border-r">
+                                    Telephone
+                                </th>
+                            </tr>
                     </thead>
                 </DataTable>
 

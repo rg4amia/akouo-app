@@ -10,6 +10,8 @@ class DataTableFetchService
 {
     public function fetchUser(Request $request, $model) {
 
+        //dd($request->all());
+
         // Initial setup
         $results = $model;
         $tableName = (new User())->getTable();
