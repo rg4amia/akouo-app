@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\DataTableFetchService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 
@@ -28,7 +29,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $users = (
-            UserResource::collection(User::get())
+            UserResource::collection(User::paginate($request->load))
         )->additional([
             'attributes' => [
                 'total' => User::count(),
@@ -39,37 +40,12 @@ class UserController extends Controller
             ]
         ]);
 
+        //Log::info(json_encode($request->all()));
+
         return inertia('Users/Index', [
             'users' => $users
         ]);
     }
-
-    /* public function index(Request $request)
-    {
-        $query = User::query();
-
-        if ($request->has('search')) {
-            $searchTerm = $request->search;
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('name', 'like', "%{$searchTerm}%")
-                ->orWhere('email', 'like', "%{$searchTerm}%");
-            });
-        }
-
-        $sortColumn = $request->input('sort', 'id');
-        $sortDirection = $request->input('direction', 'asc');
-
-        $query->orderBy($sortColumn, $sortDirection);
-
-        $perPage = $request->input('perPage', 10);
-
-        $users = $query->paginate($perPage)->withQueryString();
-
-        return Inertia::render('Users/Index', [
-            'users' => $users,
-            'filters' => $request->only(['search', 'sort', 'direction', 'perPage']),  // Pass only the first set of pagination links
-        ])->with('success', 'Akwaba chez vous !!!');
-    } */
 
     /**
      * Show the form for creating a new resource.
@@ -92,7 +68,11 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'message' => 'required|string|max:255',
+        ]);
+
+        $request->user()->chirps()->create($validated);
     }
 
     /**

@@ -1,15 +1,46 @@
-import Footer from "@/Components/Footer";
 import { useCallback, useEffect, useState } from "react";
 import BaseLayout from "@/Layouts/BaseLayout";
-import { Head, useForm, usePage } from "@inertiajs/react";
-import { Link } from "lucide-react";
-import DataTable from 'datatables.net-react';
-import DT from 'datatables.net-dt';
-//import '../App.scss';
+import { Head, Link, useForm, usePage } from "@inertiajs/react";
+import { debounce, pickBy } from "lodash";
+import ellipse from '../../../../public/assets/img/ellipse.png';
 
-DataTable.use(DT);
+export default function UserIndex({ props, auth }) {
 
-export default function UserIndex({ auth, data, users, links, filters }) {
+    //template header
+    const [state, setState] = useState(true);
+
+    const { data: people, meta, filtered, attributes } = usePage().props.users;
+    const { get } = useForm();
+    const [params, setParams] = useState(filtered);
+    const [pageNumber, setPageNumber] = useState([]);
+
+   /*  const reload = useCallback(
+        debounce((query) => {
+            get(route("user.index"), pickBy(query), {
+                preserveState: true,
+            });
+        }, 90050),
+        []
+    ); */
+
+    console.log(filtered);
+    //useEffect(() => reload(params), [params]);
+
+    useEffect(() => {
+        let numbers = [];
+        for (
+            let i = attributes.per_page;
+            i <= meta.total / attributes.per_page;
+            i = i + attributes.per_page
+        ) {
+            numbers.push(i);
+        }
+        setPageNumber(numbers);
+    }, []);
+
+    const onChange = (event) =>  setParams({ ...params, [event.target.name]: event.target.value });
+
+    /* Appplication du modal */
     const [isModalOpen, setIsModalOpen] = useState(false);
     const openModal = () => {
         setIsModalOpen(true);
@@ -19,27 +50,9 @@ export default function UserIndex({ auth, data, users, links, filters }) {
         setIsModalOpen(false);
     };
 
-    const { get, processing, errors, reset } = useForm();
-    const [state, setState] = useState(true);
-
-
-    const [tableData, setTableData] = useState();
-
-    useEffect(() => {
-        console.log(users.data);
-        setTableData(users.data);
-    },[])
-
-    const columns = [
-    { data: 'name' },
-    { data: 'email' },
-    { data: 'telephone' },
-    ];
-
-
     return (
         <BaseLayout state={state} auth={auth}>
-            <Head title="Gestion des Utilisateurs"/>
+            <Head title="Gestion des Utilisateurs" />
             <div className="flex flex-col items-start m-4" role="group">
                 <div className="flex flex-row justify-between items-center w-full">
                     <div>
@@ -61,7 +74,8 @@ export default function UserIndex({ auth, data, users, links, filters }) {
                     <div className="gap-6">
                         <button
                             className="relative rounded-lg bg-blueVh w-full overflow-hidden flex flex-col items-start justify-start py-2 px-4 box-border cursor-pointer text-left text-[12px] text-white font-outfit"
-                            id="openModal" onClick={openModal}
+                            id="openModal"
+                            onClick={openModal}
                         >
                             <div className="flex flex-row items-center justify-start gap-2">
                                 <div className="bg-white rounded-md">
@@ -106,28 +120,7 @@ export default function UserIndex({ auth, data, users, links, filters }) {
                     </div>
                 </div>
 
-                {/*<DataTable/>*/}
-
-                <DataTable columns={columns} data={tableData} className="min-w-full bg-white border-t mt-1">
-                    <thead>
-                         <tr className="text-xs border-b">
-                                <th className="py-3 px-6 text-left border-r">
-                                    NOM, Prénoms
-                                </th>
-                                <th className="py-3 px-6 text-left border-r">
-                                    Email
-                                </th>
-                                <th className="py-3 px-6 text-left border-r">
-                                    Telephone
-                                </th>
-                            </tr>
-                    </thead>
-                </DataTable>
-
-
-                {/*<DataTable/>*/}
-
-                {/* <div className="w-full bg-base-white max-w-full flex flex-row flex-wrap items-center justify-center py-3 gap-3 border mt-2 rounded-lg tracking-[normal] text-left text-xs text-gray-mid-description font-outfit">
+                <div className="w-full bg-base-white max-w-full flex flex-row flex-wrap items-center justify-center py-3 gap-3 border mt-2 rounded-lg tracking-[normal] text-left text-xs text-gray-mid-description font-outfit">
                     <div className="relative text-[16px] font-medium text-black px-4">
                         Liste des utilisateurs
                     </div>
@@ -224,17 +217,29 @@ export default function UserIndex({ auth, data, users, links, filters }) {
                             </tr>
                         </thead>
                         <tbody className="text-gray-600 text-xs">
-                            <tr className="">
+
+                             {people.map((user, index) => (
+                                 <tr className="" key={index}>
                                 <td className="py-1 px-6 border">
-                                    <a className="font-bold">Josianne KONE</a>
-                                    <div className="bg-slate-50 rounded-lg w-full">
-                                        +225 07 44 55 66 77
+                                    <div className="w-full relative border-neutral-600 box-border h-[79px] flex flex-row items-center justify-start p-3 gap-2 text-left text-3xs text-gray-description">
+                                       {/*  <div className="w-10 relative rounded-[50%] bg-lightgray h-10"> */}
+                                            <img className="w-10 relative rounded-[50%]" alt="" src={ellipse}/>
+                                        {/* </div> */}
+                                        <div className="flex flex-row items-start justify-start">
+                                        <div className="flex flex-col items-start justify-start">
+                                        <b className="relative text-[12px] text-black">{user.name}</b>
+                                        <div className="rounded bg-bg overflow-hidden flex flex-row items-center justify-center py-0.5 px-1 gap-2.5">
+                                        <div className="relative font-semibold">{user.telephone}</div>
+                                        </div>
+                                        <div className="relative font-medium">{user.email}</div>
+                                        </div>
+                                        </div>
                                     </div>
                                 </td>
                                 <td className="py-1 px-6 border">
                                     <div className="rounded bg-light-gray-bg flex flex-row items-center justify-center py-1 px-2 box-border text-[10px] text-green-vh">
                                         <div className="font-semibold">
-                                            Djiby 8
+                                             {user.cellule_id}
                                         </div>
                                     </div>
                                 </td>
@@ -300,241 +305,32 @@ export default function UserIndex({ auth, data, users, links, filters }) {
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
-                                <td className="py-1 px-6 border">
-                                    <a className="font-bold">Josianne KONE</a>
-                                    <div className="bg-slate-50 rounded-lg w-full">
-                                        +225 07 44 55 66 77
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border">
-                                    <div className="rounded bg-light-gray-bg flex flex-row items-center justify-center py-1 px-2 box-border text-[10px] text-green-vh">
-                                        <div className="font-semibold">
-                                            Djiby 8
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border">
-                                    <div className="rounded bg-bg overflow-hidden flex flex-row items-center justify-center py-1 px-2 gap-2.5">
-                                        <div className="relative font-semibold">
-                                            Angré 8ème Tranche
-                                        </div>
-                                        <img
-                                            className="w-[8.2px] h-[4.1px] hidden"
-                                            alt=""
-                                            src="Icon.svg"
-                                        />
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border"></td>
-                                <td className="py-1 px-6 border">
-                                    <div className="relative rounded bg-stroke-light-blue border-blue border-[1px] border-solid box-border w-full overflow-hidden shrink-0 flex flex-row items-center justify-center py-1 px-2 gap-1 text-left text-[10px] text-blue font-outfit">
-                                        <div className="relative font-semibold">
-                                            Bon
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border">
-                                    <div className="w-full py-3 px-4 text-left text-[10px] text-gray-mid-description">
-                                        <div className="font-medium inline-block">
-                                            Le verset n’est pas trop claire.
-                                            Mieux préciser le verset de base.
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border">
-                                    <div className="relative rounded bg-stroke-light-blue border-blue border-[1px] border-solid box-border w-full overflow-hidden shrink-0 flex flex-row items-center justify-center py-1 px-2 gap-1 text-left text-[10px] text-blue font-outfit">
-                                        <div className="relative font-semibold">
-                                            Bon
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border">
-                                    <div className="relative border-neutral-600 h-[79px] flex flex-row items-center justify-start py-3 px-4 gap-2 text-center text-xs text-blackish font-outfit-semibold-12">
-                                        <div className="rounded-lg bg-base-white border-stroke-bulto border-[2px] border-solid flex flex-row items-center justify-center p-3 gap-1">
-                                            <img
-                                                className="w-4 relative h-4 overflow-hidden shrink-0"
-                                                alt=""
-                                                src="./assets/icons/eye.svg"
-                                            />
-                                            <div className="w-[23px] relative font-semibold hidden">
-                                                Voir
-                                            </div>
-                                        </div>
-                                        <div className="flex flex-col items-start justify-end gap-1.5 text-left text-sm text-gray-700 font-text-s-medium">
-                                            <div className="self-stretch shadow-[0px_1px_2px_rgba(16,_24,_40,_0.04)] rounded-lg bg-base-white border-red-delete border-[2px] border-solid box-border h-10 flex flex-row items-center justify-start p-2.5 gap-3">
-                                                <img
-                                                    className="w-5 relative h-5 overflow-hidden shrink-0"
-                                                    alt=""
-                                                    src="./assets/icons/delete.svg"
-                                                />
-                                            </div>
-                                            <div className="w-[59px] relative tracking-[-0.1px] leading-[20px] font-medium hidden">
-                                                Headline
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td className="py-1 px-6 border-[1px]">
-                                    <a className="font-bold">Josianne KONE</a>
-                                    <div className="bg-slate-50 rounded-lg w-full">
-                                        +225 07 44 55 66 77
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border">
-                                    <div className="rounded bg-light-gray-bg flex flex-row items-center justify-center py-1 px-2 box-border text-[10px] text-green-vh">
-                                        <div className="font-semibold">
-                                            Djiby 8
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border">
-                                    <div className="rounded bg-bg overflow-hidden flex flex-row items-center justify-center py-1 px-2 gap-2.5">
-                                        <div className="relative font-semibold">
-                                            Angré 8ème Tranche
-                                        </div>
-                                        <img
-                                            className="w-[8.2px] h-[4.1px] hidden"
-                                            alt=""
-                                            src="Icon.svg"
-                                        />
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border"></td>
-                                <td className="py-1 px-6 border">
-                                    <div className="relative rounded bg-stroke-light-blue border-blue border-[1px] border-solid box-border w-full overflow-hidden shrink-0 flex flex-row items-center justify-center py-1 px-2 gap-1 text-left text-[10px] text-blue font-outfit">
-                                        <div className="relative font-semibold">
-                                            Bon
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border">
-                                    <div className="w-full py-3 px-4 text-left text-[10px] text-gray-mid-description">
-                                        <div className="font-medium inline-block">
-                                            Le verset n’est pas trop claire.
-                                            Mieux préciser le verset de base.
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border">
-                                    <div className="relative rounded bg-stroke-light-blue border-blue border-[1px] border-solid box-border w-full overflow-hidden shrink-0 flex flex-row items-center justify-center py-1 px-2 gap-1 text-left text-[10px] text-blue font-outfit">
-                                        <div className="relative font-semibold">
-                                            Bon
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border">
-                                    <div className="relative border-neutral-600 h-[79px] flex flex-row items-center justify-start py-3 px-4 gap-2 text-center text-xs text-blackish font-outfit-semibold-12">
-                                        <a
-                                            href="details_user.html"
-                                            className="rounded-lg bg-base-white border-stroke-bulto border-[2px] border-solid flex flex-row items-center justify-center p-3 gap-1"
-                                        >
-                                            <img
-                                                className="w-4 relative h-4 overflow-hidden shrink-0"
-                                                alt=""
-                                                src="./assets/icons/eye.svg"
-                                            />
-                                            <div className="w-[23px] relative font-semibold hidden">
-                                                Voir
-                                            </div>
-                                        </a>
-                                        <div className="flex flex-col items-start justify-end gap-1.5 text-left text-sm text-gray-700 font-text-s-medium">
-                                            <div className="self-stretch shadow-[0px_1px_2px_rgba(16,_24,_40,_0.04)] rounded-lg bg-base-white border-red-delete border-[2px] border-solid box-border h-10 flex flex-row items-center justify-start p-2.5 gap-3">
-                                                <img
-                                                    className="w-5 relative h-5 overflow-hidden shrink-0"
-                                                    alt=""
-                                                    src="./assets/icons/delete.svg"
-                                                />
-                                            </div>
-                                            <div className="w-[59px] relative tracking-[-0.1px] leading-[20px] font-medium hidden">
-                                                Headline
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td className="py-1 px-6 border">
-                                    <a className="font-bold">Josianne KONE</a>
-                                    <div className="bg-slate-50 rounded-lg w-full">
-                                        +225 07 44 55 66 77
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border">
-                                    <div className="rounded bg-light-gray-bg flex flex-row items-center justify-center py-1 px-2 box-border text-[10px] text-green-vh">
-                                        <div className="font-semibold">
-                                            Djiby 8
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border">
-                                    <div className="rounded bg-bg overflow-hidden flex flex-row items-center justify-center py-1 px-2 gap-2.5">
-                                        <div className="relative font-semibold">
-                                            Angré 8ème Tranche
-                                        </div>
-                                        <img
-                                            className="w-[8.2px] h-[4.1px] hidden"
-                                            alt=""
-                                            src="Icon.svg"
-                                        />
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border"></td>
-                                <td className="py-1 px-6 border">
-                                    <div className="relative rounded bg-stroke-light-blue border-blue border-[1px] border-solid box-border w-full overflow-hidden shrink-0 flex flex-row items-center justify-center py-1 px-2 gap-1 text-left text-[10px] text-blue font-outfit">
-                                        <div className="relative font-semibold">
-                                            Bon
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border">
-                                    <div className="w-full py-3 px-4 text-left text-[10px] text-gray-mid-description">
-                                        <div className="font-medium inline-block">
-                                            Le verset n’est pas trop claire.
-                                            Mieux préciser le verset de base.
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border">
-                                    <div className="relative rounded bg-stroke-light-blue border-blue border-[1px] border-solid box-border w-full overflow-hidden shrink-0 flex flex-row items-center justify-center py-1 px-2 gap-1 text-left text-[10px] text-blue font-outfit">
-                                        <div className="relative font-semibold">
-                                            Bon
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border">
-                                    <div className="relative border-neutral-600 h-[79px] flex flex-row items-center justify-start py-3 px-4 gap-2 text-center text-xs text-blackish font-outfit-semibold-12">
-                                        <div className="rounded-lg bg-base-white border-stroke-bulto border-[2px] border-solid flex flex-row items-center justify-center p-3 gap-1">
-                                            <img
-                                                className="w-4 relative h-4 overflow-hidden shrink-0"
-                                                alt=""
-                                                src="./assets/icons/eye.svg"
-                                            />
-                                            <div className="w-[23px] relative font-semibold hidden">
-                                                Voir
-                                            </div>
-                                        </div>
-                                        <div className="flex flex-col items-start justify-end gap-1.5 text-left text-sm text-gray-700 font-text-s-medium">
-                                            <div className="self-stretch shadow-[0px_1px_2px_rgba(16,_24,_40,_0.04)] rounded-lg bg-base-white border-red-delete border-[2px] border-solid box-border h-10 flex flex-row items-center justify-start p-2.5 gap-3">
-                                                <img
-                                                    className="w-5 relative h-5 overflow-hidden shrink-0"
-                                                    alt=""
-                                                    src="./assets/icons/delete.svg"
-                                                />
-                                            </div>
-                                            <div className="w-[59px] relative tracking-[-0.1px] leading-[20px] font-medium hidden">
-                                                Headline
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                            ))}
                         </tbody>
                     </table>
-                </div> */}
+                </div>
             </div>
+
+            <ul className="flex items-center gap-x-1 mt-10">
+                {meta.links.map((item, index) => (
+                    <Link
+                        disabled={item.active == true ? true : false}
+                        as="button"
+                        className={`${
+                            item.active == true
+                                ? "text-white cursor-default bg-green-vh"
+                                : "text-gray-800"
+                        } py-[7px] px-3 rounded-lg flex items-center justify-center box-border`}
+                        href={item.url || ""}
+                    >
+                        <span className="font-semibold"
+                            dangerouslySetInnerHTML={{
+                                __html: item.label,
+                            }}
+                        />
+                    </Link>
+                ))}
+            </ul>
             {/* start modal */}
 
             {isModalOpen && (

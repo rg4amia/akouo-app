@@ -5,6 +5,7 @@ import Sidebar from "@/Components/SideBar";
 //import { toast } from "sonner";
 import { usePage } from "@inertiajs/react";
 import { useEffect } from "react";
+import ellipse from '../../../public/assets/img/ellipse.png';
 
 export default function BaseLayout({children , state, auth}) {
 
@@ -29,7 +30,7 @@ export default function BaseLayout({children , state, auth}) {
             <div className="ml-64 flex-1 min-h-screen">
                 {state ?
                 <Header
-                    profileImageSrc="./assets/img/ellipse.png"
+                    profileImageSrc={ellipse}
                     welcomeMessage="Bienvenue"
                     userName={auth.user.name}
                     smilingFaceIcon="./assets/icons/smiling-face-with-halo.png"
