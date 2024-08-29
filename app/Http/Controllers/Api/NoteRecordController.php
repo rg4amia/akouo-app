@@ -16,9 +16,6 @@ class NoteRecordController extends Controller
 {
     public function store(Request $request)
     {
-
-        //dd(Rule::requiredIf($request->input('vst_base') == 'Selectionner'));
-        //strtolower($request->input('vst_base')) == 'selectionner'
         $validator = Validator::make($request->all(), [
             'vst_base'          => 'required|string',
             'vst_bibl_expl'     => 'required|string',
@@ -48,11 +45,8 @@ class NoteRecordController extends Controller
         $data =  $request->all();
         $data['predicateur_id'] = Predicateur::where('user_id', auth()->id())->first()->id;
 
-        //Log::info($data);
-
         try {
             $nt = Note::create($data);
-            //$note = Note::findOrFail($nt->id);
         } catch (\Exception $e) {
             return response()->json([
                 'success'   => false,

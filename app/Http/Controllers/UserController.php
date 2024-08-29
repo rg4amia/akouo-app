@@ -2,8 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserStoreRequest;
+use App\Http\Resources\AffectesResource;
+use App\Http\Resources\CelluleResource;
+use App\Http\Resources\EntiteResource;
+use App\Http\Resources\PaysResource;
 use App\Http\Resources\RoleResource;
+use App\Http\Resources\StatusUserResource;
+use App\Http\Resources\TypeUtilisateurResource;
 use App\Http\Resources\UserResource;
+use App\Models\Cellule;
+use App\Models\Entite;
+use App\Models\Pays;
+use App\Models\StatusUser;
+use App\Models\TypeUtilisateur;
 use App\Models\User;
 use App\Services\DataTableFetchService;
 use App\Services\UserService;
@@ -37,42 +49,49 @@ class UserController extends Controller
             ],
             'filtered' => [
                 'load' => $request->load ?? $this->loadDefault
-            ]
+            ],
+            'pays'              => (PaysResource::collection(Pays::all())),
+            'type_utilisateurs' => (TypeUtilisateurResource::collection(TypeUtilisateur::all())),
+            'roles'             => (RoleResource::collection(Role::all())),
+            'status_users'      => (StatusUserResource::collection(StatusUser::all())),
+            'entites'           => (EntiteResource::collection(Entite::all())),
+            'cellules'          => (CelluleResource::collection(Cellule::all())),
+            'affectes'          => (AffectesResource::collection(User::whereIn('id', [1, 2, 3, 4, 5, 6])->get())),
         ]);
 
-        //Log::info(json_encode($request->all()));
-
-        return inertia('Users/Index', [
-            'users' => $users
+        return Inertia::render('Users/Index', [
+            'users' => $users,
         ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request)
-    {
-        $users = User::orderBy('name', 'ASC')->get();
-
-        //dd($request->all());
-
-        /* if ($request->ajax()) {
-            return $this->dt->fetchUser($request, $users);
-        } */
-
-        return response()->json($users);
-    }
+    public function create(Request $request) {}
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'message' => 'required|string|max:255',
-        ]);
 
-        $request->user()->chirps()->create($validated);
+        //UserStoreRequest
+
+        /*   nom: "",
+        prenoms: "",
+        telephone: "",
+        email: "",
+        type_utilisateur_id: "",
+        pay_id:"",
+        role:"",
+        password:"",
+        entite_origine_id: "",
+        status_user_id: "",
+        affecter_entite:"",
+        cellule_id:"", */
+        dd($request->all());
+
+        $request->user()->users()->create($validated);
     }
 
     /**

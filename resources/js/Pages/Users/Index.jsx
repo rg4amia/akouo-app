@@ -3,16 +3,43 @@ import BaseLayout from "@/Layouts/BaseLayout";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import { debounce, pickBy } from "lodash";
 import ellipse from '../../../../public/assets/img/ellipse.png';
+import SelectOption from "@/Components/SelectOption";
+import TextInput from "@/Components/TextInput";
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+import SaveButton from "@/Components/SaveButton";
 
 export default function UserIndex({ props, auth }) {
+
+    /* Select 2 Multi */
+    const animatedComponents = makeAnimated();
 
     //template header
     const [state, setState] = useState(true);
 
-    const { data: people, meta, filtered, attributes } = usePage().props.users;
+    const { data: people, meta, filtered, attributes,
+        pays, type_utilisateurs, roles, entites, cellules,
+        status_users, affectes,
+    } = usePage().props.users;
+
     const { get } = useForm();
     const [params, setParams] = useState(filtered);
     const [pageNumber, setPageNumber] = useState([]);
+
+    const {data, setData, reset, processing, post, errors} = useForm({
+        nom: "",
+        prenoms: "",
+        telephone: "",
+        email: "",
+        type_utilisateur_id: "",
+        pay_id:"",
+        role:"",
+        password:"",
+        entite_origine_id: "",
+        status_user_id: "",
+        affecter_entite:"",
+        cellule_id:"",
+    });
 
    /*  const reload = useCallback(
         debounce((query) => {
@@ -23,7 +50,7 @@ export default function UserIndex({ props, auth }) {
         []
     ); */
 
-    console.log(filtered);
+    console.log(pays);
     //useEffect(() => reload(params), [params]);
 
     useEffect(() => {
@@ -48,6 +75,18 @@ export default function UserIndex({ props, auth }) {
 
     const closeModal = () => {
         setIsModalOpen(false);
+    };
+
+    const handleChangePays = (e) => {
+        setData('pay_id', e.target.value);
+    };
+
+    /* Function d'ajout d'utilisateur */
+    const submit = (e) => {
+        e.preventDefault();
+        post(route("user.store"), {
+            onFinish: () => reset([]),
+        });
     };
 
     return (
@@ -363,264 +402,264 @@ export default function UserIndex({ props, auth }) {
 
                         <div className="p-6 pt-0">
                             {/* Content Modal */}
-
-                            {/* Header */}
-                            <div className="flex flex-col items-start justify-start text-[24px] mb-4">
-                                <div className="flex flex-row items-center justify-start gap-2">
-                                    <img
-                                        className="w-6 h-6"
-                                        alt=""
-                                        src="./assets/icons/user-circle.svg"
-                                    />
-                                    <div className="relative font-semibold text-blueVh">
-                                        Ajouter un utilisateur
+                            <form onSubmit={submit}>
+                                {/* Header */}
+                                <div className="flex flex-col items-start justify-start text-[24px] mb-4">
+                                    <div className="flex flex-row items-center justify-start gap-2">
+                                        <img
+                                            className="w-6 h-6"
+                                            alt=""
+                                            src="./assets/icons/user-circle.svg"
+                                        />
+                                        <div className="relative font-semibold text-blueVh">
+                                            Ajouter un utilisateur
+                                        </div>
+                                    </div>
+                                    <div className="text-[12px] text-grayish-middle">
+                                        Remplissez les informations de l’utilisateur
+                                        et confirmez
                                     </div>
                                 </div>
-                                <div className="text-[12px] text-grayish-middle">
-                                    Remplissez les informations de l’utilisateur
-                                    et confirmez
-                                </div>
-                            </div>
 
-                            {/* Form Fields */}
-                            <div className="flex flex-col gap-4 text-gray">
-                                {/* Profile Image */}
-                                <div className="flex flex-row items-center justify-center relative gap-2.5">
-                                    <img
-                                        className="w-20 h-20 z-0"
-                                        alt=""
-                                        src="./assets/icons/ellipse-cricle.svg"
-                                    />
-                                    <img
-                                        className="w-8 h-8 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-                                        alt=""
-                                        src="./assets/icons/camera-alt.svg"
-                                    />
-                                </div>
+                                {/* Form Fields */}
+                                <div className="flex flex-col gap-4 text-gray">
+                                    {/* Profile Image */}
+                                    <div className="flex flex-row items-center justify-center relative gap-2.5">
+                                        <img
+                                            className="w-20 h-20 z-0"
+                                            alt=""
+                                            src="./assets/icons/ellipse-cricle.svg"
+                                        />
+                                        <img
+                                            className="w-8 h-8 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                                            alt=""
+                                            src="./assets/icons/camera-alt.svg"
+                                        />
+                                    </div>
 
-                                {/*  Name and Surname */}
-                                <div className="flex flex-row gap-3">
-                                    <div className="flex flex-col gap-1">
-                                        <label
-                                            htmlFor="nom"
-                                            className="font-bold"
-                                        >
-                                            Nom*
-                                        </label>
-                                        <input
-                                            id="nom"
+                                    {/*  Name and Surname */}
+                                    <div className="flex flex-row gap-3 w-full">
+                                        <div className="flex flex-col gap-1">
+                                            <label
+                                                htmlFor="nom"
+                                                className="font-bold"
+                                            >
+                                                Nom*
+                                            </label>
+                                            <TextInput
+                                             id="nom"
                                             type="text"
+                                            name="nom"
                                             placeholder="Ecrivez le nom ici"
-                                            className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
-                                        />
-                                    </div>
-                                    <div className="flex flex-col gap-1">
-                                        <label
-                                            htmlFor="prenom"
-                                            className="font-bold"
-                                        >
-                                            Prénoms*
-                                        </label>
-                                        <input
-                                            id="prenom"
+                                            onChange={(e) =>
+                                                setData("nom", e.target.value)
+                                            }/>
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <label
+                                                htmlFor="prenom"
+                                                className="font-bold"
+                                            >
+                                                Prénoms*
+                                            </label>
+                                            <TextInput
+                                             id="prenom"
                                             type="text"
-                                            placeholder="Ecrivez le/les prénoms ici"
-                                            className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* User Type and Category */}
-                                <div className="flex flex-row gap-3">
-                                    <div className="flex flex-col gap-1">
-                                        <label
-                                            htmlFor="typeUtilisateur"
-                                            className="font-bold"
-                                        >
-                                            Type d’utilisateur*
-                                        </label>
-                                        <select
-                                            id="typeUtilisateur"
-                                            className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
-                                        >
-                                            <option>Ecouteur</option>
-                                            <option>Noteur</option>
-                                            <option>Gestionnaire</option>
-                                        </select>
+                                            name="prenom"
+                                            placeholder="Ecrivez le nom ici"
+                                            onChange={(e) =>
+                                                setData("prenoms", e.target.value)
+                                            }/>
+                                        </div>
                                     </div>
 
-                                    <div className="flex flex-col gap-1">
-                                        <label
-                                            htmlFor="categorieUtilisateur"
-                                            className="font-bold"
-                                        >
-                                            Catégorie d’utilisateur*
-                                        </label>
-                                        <select
-                                            id="categorieUtilisateur"
-                                            className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
-                                        >
-                                            <option>User</option>
-                                            <option>Admin</option>
-                                            <option>Super Admin</option>
-                                        </select>
-                                    </div>
-                                </div>
+                                    {/* User Type and Category */}
+                                    <div className="flex flex-row gap-3">
+                                        <div className="flex flex-col gap-1 w-full">
+                                            <label
+                                                htmlFor="typeUtilisateur"
+                                                className="font-bold"
+                                            >
+                                                Type d’utilisateur*
+                                            </label>
 
-                                {/* Phone Number and Email */}
-                                <div className="flex flex-row gap-3">
-                                    <div className="flex flex-col gap-1">
-                                        <label
-                                            htmlFor="telephone"
-                                            className="font-bold"
-                                        >
-                                            Numéro de téléphone*
-                                        </label>
-                                        <input
-                                            id="telephone"
-                                            type="tel"
-                                            placeholder="+225 01 02 03 45 67"
-                                            className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
-                                        />
+                                            <SelectOption
+                                            placeholder="Selectionnez le type d'utilisateur"
+                                             options={type_utilisateurs}
+                                                onChange={(e) =>
+                                                    setData("type_utilisateur_id", e.target.value)
+                                                }
+                                            />
+                                        </div>
+
+                                        <div className="flex flex-col gap-1 w-full">
+                                            <label
+                                                htmlFor="categorieUtilisateur"
+                                                className="font-bold">
+                                                Catégorie d’utilisateur*
+                                            </label>
+                                           <SelectOption options={roles}  onChange={(e) => setData("role", e.target.value)}/>
+                                        </div>
                                     </div>
 
-                                    <div className="flex flex-col gap-1">
-                                        <label
-                                            htmlFor="email"
-                                            className="font-bold"
-                                        >
-                                            Email*
-                                        </label>
-                                        <input
-                                            id="email"
-                                            type="email"
-                                            placeholder="josianne.kone@gmail.com"
-                                            className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Password */}
-                                <div className="flex flex-col gap-1">
-                                    <label
-                                        htmlFor="password"
-                                        className="font-bold"
-                                    >
-                                        Mot de passe*
-                                    </label>
-                                    <input
-                                        id="password"
-                                        type="password"
-                                        placeholder="******"
-                                        className="w-[472px] p-3 rounded-lg border-2 border-stroke-bulto"
-                                    />
-                                </div>
-
-                                {/*  Country, Origin Entity, Cell, Assigned Entities, and Status */}
-
-                                <div className="flex flex-row gap-3">
-                                    <div className="flex flex-col gap-1">
-                                        <label
-                                            htmlFor="pays"
-                                            className="font-bold"
-                                        >
-                                            Pays*
-                                        </label>
-                                        <select
-                                            id="pays"
-                                            className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
-                                        >
-                                            <option>Côte d'Ivoire</option>
-                                        </select>
-                                    </div>
-
-                                    <div className="flex flex-col gap-1">
-                                        <label
-                                            htmlFor="entiteOrigine"
-                                            className="font-bold"
-                                        >
-                                            Entité d’origine*
-                                        </label>
-                                        <select
-                                            id="entiteOrigine"
-                                            className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
-                                        >
-                                            <option>Centre Kodesh</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-row gap-3">
-                                    <div className="flex flex-col gap-1">
-                                        <label
-                                            htmlFor="cellule"
-                                            className="font-bold"
-                                        >
-                                            Cellule*
-                                        </label>
-                                        <select
-                                            id="cellule"
-                                            className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
-                                        >
-                                            <option>Djiby 8</option>
-                                        </select>
-                                    </div>
-
-                                    <div className="flex flex-col gap-1">
-                                        <label
-                                            htmlFor="statut"
-                                            className="font-bold"
-                                        >
-                                            Statut
-                                        </label>
-                                        <select
-                                            id="statut"
-                                            className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
-                                        >
-                                            <option>En attente</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div className="flex flex-col">
+                                    {/* Phone Number and Email */}
                                     <div className="flex flex-row gap-3">
                                         <div className="flex flex-col gap-1">
                                             <label
-                                                htmlFor="entitesAffectees"
+                                                htmlFor="telephone"
                                                 className="font-bold"
                                             >
-                                                Entité(s) affectée(s)*
+                                                Numéro de téléphone*
                                             </label>
-                                            <div className="flex flex-row flex-wrap gap-1 p-3 rounded-lg border-2 border-stroke-bulto">
-                                                <span className="bg-light-stroke py-0.5 px-2 rounded-8xs">
-                                                    Angré 9
-                                                </span>
-                                                <span className="bg-light-stroke py-0.5 px-2 rounded-8xs">
-                                                    Angré 8-2
-                                                </span>
+                                             <TextInput
+                                                id="telephone"
+                                                type="tel"
+                                                name="telephone"
+                                                placeholder="Ecrivez le telephone ici"
+                                                onChange={(e) =>
+                                                setData("telephone", e.target.value)
+                                            }/>
+                                        </div>
+
+                                        <div className="flex flex-col gap-1">
+                                            <label
+                                                htmlFor="email"
+                                                className="font-bold"
+                                            >
+                                                Email*
+                                            </label>
+                                            <TextInput
+                                                id="email"
+                                                type="email"
+                                                name="email"
+                                                placeholder="Ecrivez le mail ici"
+                                                onChange={(e) =>
+                                                setData("email", e.target.value)
+                                            }/>
+                                        </div>
+                                    </div>
+
+                                    {/* Password */}
+                                        <label
+                                            htmlFor="password"
+                                            className="font-bold"
+                                        >
+                                            Mot de passe*
+                                        </label>
+
+                                        <TextInput
+                                            id="email"
+                                            type="passwor"
+                                            name="email"
+                                            placeholder="Ecrivez le Mot passe ici"
+                                            onChange={(e) =>
+                                                setData("password", e.target.value)
+                                        }/>
+
+                                    {/*  Country, Origin Entity, Cell, Assigned Entities, and Status */}
+
+                                    <div className="flex flex-row gap-3">
+                                        <div className="flex flex-col gap-1 w-full">
+                                            <label
+                                                htmlFor="pays"
+                                                className="font-bold"
+                                            >
+                                            Pays*
+                                            </label>
+                                            <SelectOption name="pay_id" options={pays} onChange={handleChangePays} />
+                                        </div>
+
+                                        <div className="flex flex-col gap-1 w-full">
+                                            <label
+                                                htmlFor="entiteOrigine"
+                                                className="font-bold"
+                                            >
+                                            Entité d’origine*
+                                            </label>
+                                            <SelectOption options={entites} onChange={(e) => setData("entite_origine_id", e.target.value)} />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-row gap-3">
+                                        <div className="flex flex-col gap-1 w-full">
+                                            <label
+                                                htmlFor="cellule"
+                                                className="font-bold"
+                                            >
+                                                Cellule*
+                                            </label>
+                                            <SelectOption options={cellules} onChange={(e) => setData("cellule_id", e.target.value)} />
+                                           {/*  <select
+                                                id="cellule"
+                                                className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
+                                            >
+                                                <option>Djiby 8</option>
+                                            </select> */}
+                                        </div>
+
+                                        <div className="flex flex-col gap-1 w-full">
+                                            <label
+                                                htmlFor="statut"
+                                                className="font-bold"
+                                            >
+                                                Statut
+                                            </label>
+                                           <SelectOption options={status_users} onChange={(e) => setData("status_user_id", e.target.value)} />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col">
+                                        <div className="flex flex-row gap-3">
+                                            <div className="flex flex-col gap-1 w-full">
+                                                <label
+                                                    htmlFor="entitesAffectees"
+                                                    className="font-bold"
+                                                >
+                                                    Entité(s) affectée(s)*
+                                                </label>
+
+                                                 <Select
+                                                    name="affecter_entite"
+                                                    closeMenuOnSelect={true}
+                                                    components={animatedComponents}
+                                                    defaultValue={[affectes[0], affectes[5]]}
+                                                    isMulti
+                                                    isClearable
+                                                    options={affectes}
+                                                    onInputChange={(value) => console.log(value)}
+                                                    className="rounded-lg border-2 border-stroke-bulto p-2"
+                                                    />
                                             </div>
                                         </div>
                                     </div>
+                                    <div className="flex flex-row w-full gap-2">
+                                        <button className="w-full relative [filter:drop-shadow(0px_1px_2px_rgba(0,_0,_0,_0.08))] rounded-lg border-gray-unselected border-[2px] border-solid box-border flex flex-row items-center justify-center py-3 px-6 text-left text-[16px] text-gray-unselected font-outfit">
+                                            <div
+                                                className="relative font-semibold cursor-pointer"
+                                                id="annulerText"
+                                            >
+                                                Annuler
+                                            </div>
+                                        </button>
+                                        <SaveButton className="" disabled={processing}>
+                                            <div
+                                                className="relative font-semibold cursor-pointer"
+                                                id="enregistrerText"
+                                            >
+                                                Enregistrer
+                                            </div>
+                                        </SaveButton>
+                                        {/* <button className="w-full relative shadow-[0px_1px_2px_rgba(0,_0,_0,_0.08)] rounded-lg bg-blueVh flex flex-row items-center justify-center py-3 px-6 box-border text-left text-[16px] text-white font-outfit">
+                                            <div
+                                                className="relative font-semibold cursor-pointer"
+                                                id="enregistrerText"
+                                            >
+                                                Enregistrer
+                                            </div>
+                                        </button> */}
+                                    </div>
                                 </div>
-                                <div className="flex flex-row w-full gap-2">
-                                    <button className="w-full relative [filter:drop-shadow(0px_1px_2px_rgba(0,_0,_0,_0.08))] rounded-lg border-gray-unselected border-[2px] border-solid box-border flex flex-row items-center justify-center py-3 px-6 text-left text-[16px] text-gray-unselected font-outfit">
-                                        <div
-                                            className="relative font-semibold cursor-pointer"
-                                            id="annulerText"
-                                        >
-                                            Annuler
-                                        </div>
-                                    </button>
-                                    <button className="w-full relative shadow-[0px_1px_2px_rgba(0,_0,_0,_0.08)] rounded-lg bg-blueVh flex flex-row items-center justify-center py-3 px-6 box-border text-left text-[16px] text-white font-outfit">
-                                        <div
-                                            className="relative font-semibold cursor-pointer"
-                                            id="enregistrerText"
-                                        >
-                                            Enregistrer
-                                        </div>
-                                    </button>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                     {/* end modal */}

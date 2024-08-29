@@ -10,6 +10,7 @@ import ConnectButton from "@/Components/Auth/ConnectButton";
 import BackgroundImage from "@/Components/Auth/BackgroundImage";
 
 export default function Login({ status, canResetPassword }) {
+    
     const { data, setData, post, processing, errors, reset } = useForm({
         email: "",
         password: "",
@@ -29,7 +30,7 @@ export default function Login({ status, canResetPassword }) {
         <div className="flex mt-10 mb-5 justify-center font-outfit">
             {/*Première colonne: 444x876 */}
             <div className="w-[580px] h-[780px] rounded-lg pt-10 pl-20 mr-8 mb-2">
-                
+
                 <Head title="Connexion"></Head>
 
                 <Header

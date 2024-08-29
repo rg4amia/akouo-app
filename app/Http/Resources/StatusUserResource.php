@@ -15,8 +15,8 @@ class StatusUserResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'libelle' => $this->libelle,
-            'color' => $this->color,
+            'value' => $this->id,
+            'label' => $this->libelle,
         ];
     }
 }

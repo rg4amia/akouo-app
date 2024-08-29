@@ -30,7 +30,8 @@ class User extends Authenticatable
         'cellule_id',
         'type_utilisateur_id',
         'entite_origine_id',
-        'status_user_id'
+        'status_user_id',
+        'created_by'
     ];
 
     /**
@@ -53,7 +54,12 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'created_by' => 'integer'
         ];
+    }
+
+    public function users() {
+        return $this->belongsTo(User::class,'created_by');
     }
 
     public function entiteaffecte()

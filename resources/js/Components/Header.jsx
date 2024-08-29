@@ -8,6 +8,7 @@ const Header = (props) => {
           alt="Ellipse"
           src={props.profileImageSrc || './assets/img/ellipse.png'}
         />
+        
         <div className="flex-col items-start justify-center">
           <div className="text-grayDescription text-sm">{props.welcomeMessage || 'Bienvenue'}</div>
           <div className="font-bold text-black text-xl">{props.userName || 'Joel KOFFI'}</div>

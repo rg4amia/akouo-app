@@ -15,7 +15,8 @@ class PaysResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'libelle' => $this->libelle
+            'value' => $this->id,
+            'label' => $this->libelle
         ];
     }
 }
