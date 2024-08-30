@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\FileUploader;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Resources\AffectesResource;
 use App\Http\Resources\CelluleResource;
@@ -20,7 +21,9 @@ use App\Models\User;
 use App\Services\DataTableFetchService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 
@@ -72,26 +75,54 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(UserStoreRequest $request)
     {
+        try {
+            // Initialize an empty array to hold entity IDs
+            $entiteIds = [];
 
-        //UserStoreRequest
+            // Loop through each item in the request's affecter_entite array and collect the 'value' fields
+            foreach ($request->affecter_entite as $value) {
+                $entiteIds[] = $value['value'];
+            }
 
-        /*   nom: "",
-        prenoms: "",
-        telephone: "",
-        email: "",
-        type_utilisateur_id: "",
-        pay_id:"",
-        role:"",
-        password:"",
-        entite_origine_id: "",
-        status_user_id: "",
-        affecter_entite:"",
-        cellule_id:"", */
-        dd($request->all());
+            $entites = Entite::whereIn('id', $entiteIds)->get();
 
-        $request->user()->users()->create($validated);
+            //process save avatar profile user
+            $avatarPath = null;
+            if ($request->hasFile('photo')) {
+                $fileName = 'AVATAR_' . $request->nom . '_' . $request->prenoms  . '_' . $request->telephone . '.' . $request->photo->extension();
+                $avatarPath = FileUploader::upload($request, 'photo', 'public', 'AVATAR/' . Str::upper(str_replace(" ", "_", $fileName)));
+            }
+
+            $role_r = Role::where('id', '=', $request->role)->firstOrFail();
+
+            $user  = User::create([
+                'name' => $request->nom . ' ' . $request->prenoms,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+                'telephone' => $request->telephone,
+                'note' => $request->type_utilisateur_id == 3 ? 1 : 0,
+                'enregistre' => $request->type_utilisateur_id == 2 ? 1 : 0,
+                'indicatif' => null,
+                'active' => 0,
+                'pay_id' => $request->pay_id,
+                'cellule_id' => $request->cellule_id, // cellule
+                'type_utilisateur_id' => $request->type_utilisateur_id,
+                'entite_origine_id' => $request->entite_origine_id,
+                'status_user_id' => $request->status_user_id,
+                'created_by' => Auth::id(),
+                'photo' => $avatarPath
+            ]);
+
+            $user->assignRole($role_r);
+            $user->entites()->attach($entites);
+
+            return redirect()->route('user.index')->with(['success' => 'Utilisateur enregistré avec succès!']);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with(['error' => 'Erreur survenue pendant l\'enregistrement']);
+        }
     }
 
     /**

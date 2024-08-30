@@ -31,7 +31,8 @@ class User extends Authenticatable
         'type_utilisateur_id',
         'entite_origine_id',
         'status_user_id',
-        'created_by'
+        'created_by',
+        'photo'
     ];
 
     /**
@@ -95,5 +96,10 @@ class User extends Authenticatable
     public function statususer()
     {
         return $this->belongsTo(StatusUser::class, 'status_user_id', 'id');
+    }
+
+    public function entites()
+    {
+        return $this->belongsToMany(Entite::class, 'entite_user', 'user_id', 'entite_id')->withTimestamps();
     }
 }

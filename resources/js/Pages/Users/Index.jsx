@@ -2,46 +2,88 @@ import { useCallback, useEffect, useState } from "react";
 import BaseLayout from "@/Layouts/BaseLayout";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
 import { debounce, pickBy } from "lodash";
-import ellipse from '../../../../public/assets/img/ellipse.png';
+import ellipse from "../../../../public/assets/img/ellipse.png";
 import SelectOption from "@/Components/SelectOption";
 import TextInput from "@/Components/TextInput";
-import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
-import SaveButton from "@/Components/SaveButton";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
+import ButtonStandard from "@/Components/ButtonStandard";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import FlashMessage from "@/Components/FlashMessage";
+import InputError from "@/Components/InputError";
 
 export default function UserIndex({ props, auth }) {
+    /* Sweet alert Config */
+    const MySwal = withReactContent(Swal);
 
     /* Select 2 Multi */
     const animatedComponents = makeAnimated();
 
+    /* Upload Image Process */
+    const [file, setFile] = useState(null);
+    const [uploadedFileURL, setUploadedFileURL] = useState(null);
+
+    function handleChange(event) {
+        const selectedFile = event.target.files[0];
+        if (selectedFile) {
+            setFile(selectedFile);
+            setData("photo", file);
+            setUploadedFileURL(URL.createObjectURL(selectedFile)); // Create a URL for the selected file
+        }
+    }
+
     //template header
     const [state, setState] = useState(true);
 
-    const { data: people, meta, filtered, attributes,
-        pays, type_utilisateurs, roles, entites, cellules,
-        status_users, affectes,
+    const {
+        data: people,
+        meta,
+        filtered,
+        attributes,
+        pays,
+        type_utilisateurs,
+        roles,
+        entites,
+        cellules,
+        status_users,
+        affectes,
     } = usePage().props.users;
+
+    /* Flash Message */
+    const { flash } = usePage().props;
+    const [stateSuccess, setStateSuccess] = useState("");
+    const [stateError, setStateError] = useState(flash.error);
+    const [stateInfo, setStateInfo] = useState(flash.info);
+
+    setTimeout(() => {
+        if(stateSuccess || stateError || stateInfo )
+            setStateSuccess(null);
+            setStateError(null);
+            setStateInfo(null);
+    }, 3000);
 
     const { get } = useForm();
     const [params, setParams] = useState(filtered);
     const [pageNumber, setPageNumber] = useState([]);
 
-    const {data, setData, reset, processing, post, errors} = useForm({
+    const { data, setData, reset, processing, post, errors } = useForm({
         nom: "",
         prenoms: "",
         telephone: "",
         email: "",
         type_utilisateur_id: "",
-        pay_id:"",
-        role:"",
-        password:"",
+        pay_id: "",
+        role: "",
+        password: "",
         entite_origine_id: "",
         status_user_id: "",
-        affecter_entite:"",
-        cellule_id:"",
+        affecter_entite: "",
+        cellule_id: "",
+        photo: "",
     });
 
-   /*  const reload = useCallback(
+    /*  const reload = useCallback(
         debounce((query) => {
             get(route("user.index"), pickBy(query), {
                 preserveState: true,
@@ -50,7 +92,6 @@ export default function UserIndex({ props, auth }) {
         []
     ); */
 
-    console.log(pays);
     //useEffect(() => reload(params), [params]);
 
     useEffect(() => {
@@ -63,9 +104,11 @@ export default function UserIndex({ props, auth }) {
             numbers.push(i);
         }
         setPageNumber(numbers);
+        //MySwal.fire('mess')
     }, []);
 
-    const onChange = (event) =>  setParams({ ...params, [event.target.name]: event.target.value });
+    const onChange = (event) =>
+        setParams({ ...params, [event.target.name]: event.target.value });
 
     /* Appplication du modal */
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -78,20 +121,42 @@ export default function UserIndex({ props, auth }) {
     };
 
     const handleChangePays = (e) => {
-        setData('pay_id', e.target.value);
+        setData("pay_id", e.target.value);
     };
 
     /* Function d'ajout d'utilisateur */
     const submit = (e) => {
         e.preventDefault();
         post(route("user.store"), {
-            onFinish: () => reset([]),
+            onSuccess: (e) => {
+                console.log(e.props.flash);
+                setStateSuccess(e.props.flash.success);
+                reset([]),
+                closeModal();
+                stateSuccess && MySwal.fire(stateSuccess)
+            },
         });
     };
 
     return (
         <BaseLayout state={state} auth={auth}>
             <Head title="Gestion des Utilisateurs" />
+            {stateSuccess && (
+                <div className="bg-green-100 border-lb-4 border-green-500 text-green-700 p-4 mb-4">
+                    <p>{stateSuccess}</p>
+                </div>
+            )}
+
+            {stateError && (
+                <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
+                    <p>{stateError}</p>
+                </div>
+            )}
+            {stateInfo && (
+                <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4">
+                    <p>{stateInfo}</p>
+                </div>
+            )}
             <div className="flex flex-col items-start m-4" role="group">
                 <div className="flex flex-row justify-between items-center w-full">
                     <div>
@@ -256,94 +321,99 @@ export default function UserIndex({ props, auth }) {
                             </tr>
                         </thead>
                         <tbody className="text-gray-600 text-xs">
-
-                             {people.map((user, index) => (
-                                 <tr className="" key={index}>
-                                <td className="py-1 px-6 border">
-                                    <div className="w-full relative border-neutral-600 box-border h-[79px] flex flex-row items-center justify-start p-3 gap-2 text-left text-3xs text-gray-description">
-                                       {/*  <div className="w-10 relative rounded-[50%] bg-lightgray h-10"> */}
-                                            <img className="w-10 relative rounded-[50%]" alt="" src={ellipse}/>
-                                        {/* </div> */}
-                                        <div className="flex flex-row items-start justify-start">
-                                        <div className="flex flex-col items-start justify-start">
-                                        <b className="relative text-[12px] text-black">{user.name}</b>
-                                        <div className="rounded bg-bg overflow-hidden flex flex-row items-center justify-center py-0.5 px-1 gap-2.5">
-                                        <div className="relative font-semibold">{user.telephone}</div>
-                                        </div>
-                                        <div className="relative font-medium">{user.email}</div>
-                                        </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border">
-                                    <div className="rounded bg-light-gray-bg flex flex-row items-center justify-center py-1 px-2 box-border text-[10px] text-green-vh">
-                                        <div className="font-semibold">
-                                             {user.cellule_id}
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border">
-                                    <div className="rounded bg-bg overflow-hidden flex flex-row items-center justify-center py-1 px-2 gap-2.5">
-                                        <div className="relative font-semibold">
-                                            Angré 8ème Tranche
-                                        </div>
-                                        <img
-                                            className="w-[8.2px] h-[4.1px] hidden"
-                                            alt=""
-                                            src="Icon.svg"
-                                        />
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border"></td>
-                                <td className="py-1 px-6 border">
-                                    <div className="relative rounded bg-stroke-light-blue border-blue border-[1px] border-solid box-border w-full overflow-hidden shrink-0 flex flex-row items-center justify-center py-1 px-2 gap-1 text-left text-[10px] text-blue font-outfit">
-                                        <div className="relative font-semibold">
-                                            Bon
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border">
-                                    <div className="w-full py-3 px-4 text-left text-[10px] text-gray-mid-description">
-                                        <div className="font-medium inline-block">
-                                            Le verset n’est pas trop claire.
-                                            Mieux préciser le verset de base.
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border">
-                                    <div className="relative rounded bg-stroke-light-blue border-blue border-[1px] border-solid box-border w-full overflow-hidden shrink-0 flex flex-row items-center justify-center py-1 px-2 gap-1 text-left text-[10px] text-blue font-outfit">
-                                        <div className="relative font-semibold">
-                                            Bon
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="py-1 px-6 border">
-                                    <div className="relative border-neutral-600 h-[79px] flex flex-row items-center justify-start py-3 px-4 gap-2 text-center text-xs text-blackish font-outfit-semibold-12">
-                                        <div className="rounded-lg bg-base-white border-stroke-bulto border-[2px] border-solid flex flex-row items-center justify-center p-3 gap-1">
+                            {people.map((user, index) => (
+                                <tr className="" key={index}>
+                                    <td className="py-1 px-6 border">
+                                        <div className="w-full relative border-neutral-600 box-border h-[79px] flex flex-row items-center justify-start p-3 gap-2 text-left text-3xs text-gray-description">
+                                            {/*  <div className="w-10 relative rounded-[50%] bg-lightgray h-10"> */}
                                             <img
-                                                className="w-4 relative h-4 overflow-hidden shrink-0"
+                                                className="w-10 relative rounded-[50%]"
                                                 alt=""
-                                                src="./assets/icons/eye.svg"
+                                                src={ellipse}
                                             />
-                                            <div className="w-[23px] relative font-semibold hidden">
-                                                Voir
+                                            {/* </div> */}
+                                            <div className="flex flex-row items-start justify-start">
+                                                <div className="flex flex-col items-start justify-start">
+                                                    <b className="relative text-[12px] text-black">
+                                                        {user.name}
+                                                    </b>
+                                                    <div className="rounded bg-bg overflow-hidden flex flex-row items-center justify-center py-0.5 px-1 gap-2.5">
+                                                        <div className="relative font-semibold">
+                                                            {user.telephone}
+                                                        </div>
+                                                    </div>
+                                                    <div className="relative font-medium">
+                                                        {user.email}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div className="flex flex-col items-start justify-end gap-1.5 text-left text-sm text-gray-700 font-text-s-medium">
-                                            <div className="self-stretch shadow-[0px_1px_2px_rgba(16,_24,_40,_0.04)] rounded-lg bg-base-white border-red-delete border-[2px] border-solid box-border h-10 flex flex-row items-center justify-start p-2.5 gap-3">
+                                    </td>
+                                    <td className="py-1 px-6 border">
+                                        <div className="rounded bg-light-gray-bg flex flex-row items-center justify-center py-1 px-2 box-border text-[10px] text-green-vh">
+                                            <div className="font-semibold">
+                                                {user.cellule_id}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="py-1 px-6 border">
+                                        <div className="rounded bg-bg overflow-hidden flex flex-row items-center justify-center py-1 px-2 gap-2.5">
+                                            <div className="relative font-semibold">
+                                                Angré 8ème Tranche
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="py-1 px-6 border"></td>
+                                    <td className="py-1 px-6 border">
+                                        <div className="relative rounded bg-stroke-light-blue border-blue border-[1px] border-solid box-border w-full overflow-hidden shrink-0 flex flex-row items-center justify-center py-1 px-2 gap-1 text-left text-[10px] text-blue font-outfit">
+                                            <div className="relative font-semibold">
+                                                Bon
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="py-1 px-6 border">
+                                        <div className="w-full py-3 px-4 text-left text-[10px] text-gray-mid-description">
+                                            <div className="font-medium inline-block">
+                                                Le verset n’est pas trop claire.
+                                                Mieux préciser le verset de
+                                                base.
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="py-1 px-6 border">
+                                        <div className="relative rounded bg-stroke-light-blue border-blue border-[1px] border-solid box-border w-full overflow-hidden shrink-0 flex flex-row items-center justify-center py-1 px-2 gap-1 text-left text-[10px] text-blue font-outfit">
+                                            <div className="relative font-semibold">
+                                                Bon
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="py-1 px-6 border">
+                                        <div className="relative border-neutral-600 h-[79px] flex flex-row items-center justify-start py-3 px-4 gap-2 text-center text-xs text-blackish font-outfit-semibold-12">
+                                            <div className="rounded-lg bg-base-white border-stroke-bulto border-[2px] border-solid flex flex-row items-center justify-center p-3 gap-1">
                                                 <img
-                                                    className="w-5 relative h-5 overflow-hidden shrink-0"
+                                                    className="w-4 relative h-4 overflow-hidden shrink-0"
                                                     alt=""
-                                                    src="./assets/icons/delete.svg"
+                                                    src="./assets/icons/eye.svg"
                                                 />
+                                                <div className="w-[23px] relative font-semibold hidden">
+                                                    Voir
+                                                </div>
                                             </div>
-                                            <div className="w-[59px] relative tracking-[-0.1px] leading-[20px] font-medium hidden">
-                                                Headline
+                                            <div className="flex flex-col items-start justify-end gap-1.5 text-left text-sm text-gray-700 font-text-s-medium">
+                                                <div className="self-stretch shadow-[0px_1px_2px_rgba(16,_24,_40,_0.04)] rounded-lg bg-base-white border-red-delete border-[2px] border-solid box-border h-10 flex flex-row items-center justify-start p-2.5 gap-3">
+                                                    <img
+                                                        className="w-5 relative h-5 overflow-hidden shrink-0"
+                                                        alt=""
+                                                        src="./assets/icons/delete.svg"
+                                                    />
+                                                </div>
+                                                <div className="w-[59px] relative tracking-[-0.1px] leading-[20px] font-medium hidden">
+                                                    Headline
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
                             ))}
                         </tbody>
                     </table>
@@ -362,7 +432,8 @@ export default function UserIndex({ props, auth }) {
                         } py-[7px] px-3 rounded-lg flex items-center justify-center box-border`}
                         href={item.url || ""}
                     >
-                        <span className="font-semibold"
+                        <span
+                            className="font-semibold"
                             dangerouslySetInnerHTML={{
                                 __html: item.label,
                             }}
@@ -416,15 +487,15 @@ export default function UserIndex({ props, auth }) {
                                         </div>
                                     </div>
                                     <div className="text-[12px] text-grayish-middle">
-                                        Remplissez les informations de l’utilisateur
-                                        et confirmez
+                                        Remplissez les informations de
+                                        l’utilisateur et confirmez
                                     </div>
                                 </div>
 
                                 {/* Form Fields */}
                                 <div className="flex flex-col gap-4 text-gray">
-                                    {/* Profile Image */}
-                                    <div className="flex flex-row items-center justify-center relative gap-2.5">
+                                    {/* Profile Input Image */}
+                                    {/* <div className="flex flex-row items-center justify-center relative gap-2.5">
                                         <img
                                             className="w-20 h-20 z-0"
                                             alt=""
@@ -434,6 +505,36 @@ export default function UserIndex({ props, auth }) {
                                             className="w-8 h-8 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
                                             alt=""
                                             src="./assets/icons/camera-alt.svg"
+                                        />
+                                    </div> */}
+
+                                    {/* Profile Input Image */}
+                                    <div className="flex flex-row items-center justify-center relative gap-2.5">
+                                        <label
+                                            htmlFor="file-input"
+                                            className="cursor-pointer"
+                                        >
+                                            <img
+                                                className="w-20 h-20 z-0 object-cover rounded-full"
+                                                alt="Profile"
+                                                src={
+                                                    uploadedFileURL ||
+                                                    "./assets/icons/ellipse-cricle.svg"
+                                                } // Show uploaded file or default profile image
+                                            />
+                                            <img
+                                                className="w-8 h-8 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                                                alt="Camera Icon"
+                                                src="./assets/icons/camera-alt.svg"
+                                            />
+                                        </label>
+
+                                        {/* Hidden File Input */}
+                                        <input
+                                            id="file-input"
+                                            type="file"
+                                            onChange={handleChange}
+                                            className="hidden"
                                         />
                                     </div>
 
@@ -447,13 +548,22 @@ export default function UserIndex({ props, auth }) {
                                                 Nom*
                                             </label>
                                             <TextInput
-                                             id="nom"
-                                            type="text"
-                                            name="nom"
-                                            placeholder="Ecrivez le nom ici"
-                                            onChange={(e) =>
-                                                setData("nom", e.target.value)
-                                            }/>
+                                                id="nom"
+                                                type="text"
+                                                name="nom"
+                                                placeholder="Ecrivez le nom ici"
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "nom",
+                                                        e.target.value
+                                                    )
+                                                }
+                                                error={errors.nom}
+                                            />
+                                            <InputError
+                                                message={errors.nom}
+                                                className="mt-0"
+                                            />
                                         </div>
                                         <div className="flex flex-col gap-1">
                                             <label
@@ -463,13 +573,22 @@ export default function UserIndex({ props, auth }) {
                                                 Prénoms*
                                             </label>
                                             <TextInput
-                                             id="prenom"
-                                            type="text"
-                                            name="prenom"
-                                            placeholder="Ecrivez le nom ici"
-                                            onChange={(e) =>
-                                                setData("prenoms", e.target.value)
-                                            }/>
+                                                id="prenoms"
+                                                type="text"
+                                                name="prenoms"
+                                                placeholder="Ecrivez le nom ici"
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "prenoms",
+                                                        e.target.value
+                                                    )
+                                                }
+                                                error={errors.prenoms}
+                                            />
+                                            <InputError
+                                                message={errors.prenoms}
+                                                className="mt-0"
+                                            />
                                         </div>
                                     </div>
 
@@ -484,21 +603,44 @@ export default function UserIndex({ props, auth }) {
                                             </label>
 
                                             <SelectOption
-                                            placeholder="Selectionnez le type d'utilisateur"
-                                             options={type_utilisateurs}
+                                                placeholder="Selectionner type d'utilisateur"
+                                                options={type_utilisateurs}
+                                                error={errors.type_utilisateur_id}
                                                 onChange={(e) =>
-                                                    setData("type_utilisateur_id", e.target.value)
+                                                    setData(
+                                                        "type_utilisateur_id",
+                                                        e.target.value
+                                                    )
                                                 }
+                                            />
+                                            <InputError
+                                                message={errors.type_utilisateur_id}
+                                                className="mt-0"
                                             />
                                         </div>
 
                                         <div className="flex flex-col gap-1 w-full">
                                             <label
                                                 htmlFor="categorieUtilisateur"
-                                                className="font-bold">
+                                                className="font-bold"
+                                            >
                                                 Catégorie d’utilisateur*
                                             </label>
-                                           <SelectOption options={roles}  onChange={(e) => setData("role", e.target.value)}/>
+                                            <SelectOption
+                                                options={roles}
+                                                placeholder="Selectionner catégorie"
+                                                error={errors.role}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "role",
+                                                        e.target.value
+                                                    )
+                                                }
+                                            />
+                                            <InputError
+                                                message={errors.role}
+                                                className="mt-0"
+                                            />
                                         </div>
                                     </div>
 
@@ -511,14 +653,23 @@ export default function UserIndex({ props, auth }) {
                                             >
                                                 Numéro de téléphone*
                                             </label>
-                                             <TextInput
+                                            <TextInput
                                                 id="telephone"
                                                 type="tel"
                                                 name="telephone"
+                                                error={errors.telephone}
                                                 placeholder="Ecrivez le telephone ici"
                                                 onChange={(e) =>
-                                                setData("telephone", e.target.value)
-                                            }/>
+                                                    setData(
+                                                        "telephone",
+                                                        e.target.value
+                                                    )
+                                                }
+                                            />
+                                            <InputError
+                                                message={errors.telephone}
+                                                className="mt-0"
+                                            />
                                         </div>
 
                                         <div className="flex flex-col gap-1">
@@ -532,29 +683,44 @@ export default function UserIndex({ props, auth }) {
                                                 id="email"
                                                 type="email"
                                                 name="email"
+                                                error={errors.email}
                                                 placeholder="Ecrivez le mail ici"
                                                 onChange={(e) =>
-                                                setData("email", e.target.value)
-                                            }/>
+                                                    setData(
+                                                        "email",
+                                                        e.target.value
+                                                    )
+                                                }
+                                            />
+                                            <InputError
+                                                message={errors.email}
+                                                className="mt-0"
+                                            />
                                         </div>
                                     </div>
 
                                     {/* Password */}
-                                        <label
-                                            htmlFor="password"
-                                            className="font-bold"
-                                        >
-                                            Mot de passe*
-                                        </label>
+                                    <label
+                                        htmlFor="password"
+                                        className="font-bold"
+                                    >
+                                        Mot de passe*
+                                    </label>
 
-                                        <TextInput
-                                            id="email"
-                                            type="passwor"
-                                            name="email"
-                                            placeholder="Ecrivez le Mot passe ici"
-                                            onChange={(e) =>
-                                                setData("password", e.target.value)
-                                        }/>
+                                    <TextInput
+                                        id="email"
+                                        type="password"
+                                        name="email"
+                                        placeholder="Ecrivez le Mot passe ici"
+                                        error={errors.password}
+                                        onChange={(e) =>
+                                            setData("password", e.target.value)
+                                        }
+                                    />
+                                    <InputError
+                                        message={errors.password}
+                                        className="mt-0"
+                                    />
 
                                     {/*  Country, Origin Entity, Cell, Assigned Entities, and Status */}
 
@@ -564,9 +730,19 @@ export default function UserIndex({ props, auth }) {
                                                 htmlFor="pays"
                                                 className="font-bold"
                                             >
-                                            Pays*
+                                                Pays*
                                             </label>
-                                            <SelectOption name="pay_id" options={pays} onChange={handleChangePays} />
+                                            <SelectOption
+                                                name="pay_id"
+                                                placeholder="Selectionner pays"
+                                                options={pays}
+                                                error={errors.pay_id}
+                                                onChange={handleChangePays}
+                                            />
+                                            <InputError
+                                                message={errors.pay_id}
+                                                className="mt-0"
+                                            />
                                         </div>
 
                                         <div className="flex flex-col gap-1 w-full">
@@ -574,9 +750,24 @@ export default function UserIndex({ props, auth }) {
                                                 htmlFor="entiteOrigine"
                                                 className="font-bold"
                                             >
-                                            Entité d’origine*
+                                                Entité d’origine*
                                             </label>
-                                            <SelectOption options={entites} onChange={(e) => setData("entite_origine_id", e.target.value)} />
+                                            <SelectOption
+                                                options={entites}
+                                                placeholder="Selectionner entité d’origine"
+                                                name="entite_origine_id"
+                                                error={errors.entite_origine_id}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "entite_origine_id",
+                                                        e.target.value
+                                                    )
+                                                }
+                                            />
+                                            <InputError
+                                                message={errors.entite_origine_id}
+                                                className="mt-0"
+                                            />
                                         </div>
                                     </div>
 
@@ -588,13 +779,21 @@ export default function UserIndex({ props, auth }) {
                                             >
                                                 Cellule*
                                             </label>
-                                            <SelectOption options={cellules} onChange={(e) => setData("cellule_id", e.target.value)} />
-                                           {/*  <select
-                                                id="cellule"
-                                                className="w-[230px] p-3 rounded-lg border-2 border-stroke-bulto"
-                                            >
-                                                <option>Djiby 8</option>
-                                            </select> */}
+                                            <SelectOption
+                                                options={cellules}
+                                                placeholder="Selectionner cellule"
+                                                error={errors.cellule_id}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "cellule_id",
+                                                        e.target.value
+                                                    )
+                                                }
+                                            />
+                                            <InputError
+                                                message={errors.cellule_id}
+                                                className="mt-0"
+                                            />
                                         </div>
 
                                         <div className="flex flex-col gap-1 w-full">
@@ -604,7 +803,23 @@ export default function UserIndex({ props, auth }) {
                                             >
                                                 Statut
                                             </label>
-                                           <SelectOption options={status_users} onChange={(e) => setData("status_user_id", e.target.value)} />
+                                            <SelectOption
+                                                name="status_user_id"
+                                                placeholder="Selectionner statut"
+                                                className="rounded-lg border-2 border-stroke-bulto p-2"
+                                                options={status_users}
+                                                error={errors.status_user_id}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "status_user_id",
+                                                        e.target.value
+                                                    )
+                                                }
+                                            />
+                                            <InputError
+                                                message={errors.status_user_id}
+                                                className="mt-0"
+                                            />
                                         </div>
                                     </div>
 
@@ -618,37 +833,57 @@ export default function UserIndex({ props, auth }) {
                                                     Entité(s) affectée(s)*
                                                 </label>
 
-                                                 <Select
+                                                <Select
                                                     name="affecter_entite"
                                                     closeMenuOnSelect={true}
-                                                    components={animatedComponents}
-                                                    defaultValue={[affectes[0], affectes[5]]}
+                                                    placeholder="Selectionner entité(s) affectée(s)"
+                                                    components={
+                                                        animatedComponents
+                                                    }
+                                                    defaultValue={[]}
                                                     isMulti
                                                     isClearable
-                                                    options={affectes}
-                                                    onInputChange={(value) => console.log(value)}
-                                                    className="rounded-lg border-2 border-stroke-bulto p-2"
-                                                    />
+                                                    options={entites}
+                                                    isSearchable
+                                                    onChange={(value) =>
+                                                        setData(
+                                                            "affecter_entite",
+                                                            value
+                                                        )
+                                                    }
+                                                    className="rounded-lg border-2 border-stroke-bulto p-1"
+                                                />
+                                                <InputError
+                                                    message={errors.affecter_entite}
+                                                    className="mt-0"
+                                                />
                                             </div>
                                         </div>
                                     </div>
                                     <div className="flex flex-row w-full gap-2">
-                                        <button className="w-full relative [filter:drop-shadow(0px_1px_2px_rgba(0,_0,_0,_0.08))] rounded-lg border-gray-unselected border-[2px] border-solid box-border flex flex-row items-center justify-center py-3 px-6 text-left text-[16px] text-gray-unselected font-outfit">
+                                        <ButtonStandard
+                                            className="text-black bg-gray-100 border-gray-unselected focus:ring-2 focus:ring-[#E1EFFC] hover:bg-gray-200"
+                                            disabled={processing}
+                                            onClick={() => closeModal(false)}
+                                        >
                                             <div
                                                 className="relative font-semibold cursor-pointer"
                                                 id="annulerText"
                                             >
                                                 Annuler
                                             </div>
-                                        </button>
-                                        <SaveButton className="" disabled={processing}>
+                                        </ButtonStandard>
+                                        <ButtonStandard
+                                            className="text-white bg-blueVh focus:ring-2 focus:ring-[#E1EFFC] hover:bg-blueVh"
+                                            disabled={processing}
+                                        >
                                             <div
                                                 className="relative font-semibold cursor-pointer"
                                                 id="enregistrerText"
                                             >
                                                 Enregistrer
                                             </div>
-                                        </SaveButton>
+                                        </ButtonStandard>
                                         {/* <button className="w-full relative shadow-[0px_1px_2px_rgba(0,_0,_0,_0.08)] rounded-lg bg-blueVh flex flex-row items-center justify-center py-3 px-6 box-border text-left text-[16px] text-white font-outfit">
                                             <div
                                                 className="relative font-semibold cursor-pointer"

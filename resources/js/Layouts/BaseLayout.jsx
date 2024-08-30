@@ -2,26 +2,9 @@ import Footer from "@/Components/Footer";
 import HeaderShow from "@/Components/HeaderShow";
 import Header from "@/Components/Header";
 import Sidebar from "@/Components/SideBar";
-//import { toast } from "sonner";
-import { usePage } from "@inertiajs/react";
-import { useEffect } from "react";
 import ellipse from '../../../public/assets/img/ellipse.png';
 
 export default function BaseLayout({children , state, auth}) {
-
-    const { flash } = usePage().props;
-
-    useEffect(() => {
-        //console.log(flash);
-        /* flash.type && toast(flash.message, {
-            type: flash.type,
-            duration: 2500,
-            action: {
-                label: <XIcon className="h-4 w-4 shrink-0" />,
-                onClick: () => toast.dismiss()
-            }
-        }); */
-    }, []);
 
    return (
         <div className="flex font-outfit">

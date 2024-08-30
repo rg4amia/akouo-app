@@ -36,4 +36,9 @@ class Entite extends Model
     public function noteur(){
         return $this->belongsTo(Predicateur::class,'predicateur_id','id');
     }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'entite_user', 'entite_id', 'user_id')->withTimestamps();
+    }
 }

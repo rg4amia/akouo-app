@@ -29,6 +29,8 @@
         "datatables.net-react": "^1.0.0",
         "lucide-react": "^0.429.0",
         "react-select": "^5.8.0",
+        "sweetalert2": "^11.12.4",
+        "sweetalert2-react-content": "^5.0.7",
         "tailwind-merge": "^2.5.2",
         "tailwindcss-animate": "^1.0.7",
         "use-debounce": "^10.0.3"
