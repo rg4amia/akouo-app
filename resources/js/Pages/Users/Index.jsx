@@ -57,10 +57,9 @@ export default function UserIndex({ props, auth }) {
     const [stateInfo, setStateInfo] = useState(flash.info);
 
     setTimeout(() => {
-        if(stateSuccess || stateError || stateInfo )
-            setStateSuccess(null);
-            setStateError(null);
-            setStateInfo(null);
+        if (stateSuccess || stateError || stateInfo) setStateSuccess(null);
+        setStateError(null);
+        setStateInfo(null);
     }, 3000);
 
     const { get } = useForm();
@@ -131,9 +130,8 @@ export default function UserIndex({ props, auth }) {
             onSuccess: (e) => {
                 console.log(e.props.flash);
                 setStateSuccess(e.props.flash.success);
-                reset([]),
-                closeModal();
-                stateSuccess && MySwal.fire(stateSuccess)
+                reset([]), closeModal();
+                stateSuccess && MySwal.fire(stateSuccess);
             },
         });
     };
@@ -323,7 +321,7 @@ export default function UserIndex({ props, auth }) {
                         <tbody className="text-gray-600 text-xs">
                             {people.map((user, index) => (
                                 <tr className="" key={index}>
-                                    <td className="py-1 px-6 border">
+                                    <td className="py-1 px-2 border">
                                         <div className="w-full relative border-neutral-600 box-border h-[79px] flex flex-row items-center justify-start p-3 gap-2 text-left text-3xs text-gray-description">
                                             {/*  <div className="w-10 relative rounded-[50%] bg-lightgray h-10"> */}
                                             <img
@@ -349,41 +347,63 @@ export default function UserIndex({ props, auth }) {
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="py-1 px-6 border">
-                                        <div className="rounded bg-light-gray-bg flex flex-row items-center justify-center py-1 px-2 box-border text-[10px] text-green-vh">
-                                            <div className="font-semibold">
-                                                {user.cellule_id}
-                                            </div>
-                                        </div>
+                                    <td className="py-1 px-2 border">
+                                        <span class="font-medium">
+                                            {" "}
+                                            {user.pays}
+                                        </span>
                                     </td>
                                     <td className="py-1 px-6 border">
-                                        <div className="rounded bg-bg overflow-hidden flex flex-row items-center justify-center py-1 px-2 gap-2.5">
+                                        <div className="rounded bg-bg text-greenVh overflow-hidden flex flex-row items-center justify-center py-1 px-2 gap-2.5">
                                             <div className="relative font-semibold">
-                                                Angré 8ème Tranche
+                                                {user.cellule}
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="py-1 px-6 border"></td>
                                     <td className="py-1 px-6 border">
-                                        <div className="relative rounded bg-stroke-light-blue border-blue border-[1px] border-solid box-border w-full overflow-hidden shrink-0 flex flex-row items-center justify-center py-1 px-2 gap-1 text-left text-[10px] text-blue font-outfit">
+                                        <div className="rounded-md bg-bg flex items-center justify-center py-1">
+                                            {user.typeutilisateur}
+                                        </div>
+                                    </td>
+                                    <td className="py-1 px-6 border">
+                                        <div className="rounded-md bg-bg flex items-center justify-center py-1">
+                                            {user.categorie}
+                                        </div>
+                                    </td>
+                                    <td className="py-1 px-6 border">
+                                        {user.entiteaffecte.length > 0 ? (
+                                            <ul>
+                                                {user.entiteaffecte.map(
+                                                    (entite, index) => (
+                                                        <li
+                                                            className="rounded-md bg-bg flex items-center justify-center py-1 mt-1"
+                                                            key={index}
+                                                        >
+                                                            {entite}
+                                                        </li>
+                                                    )
+                                                )}
+                                            </ul>
+                                        ) : (
+                                            <p>Aucune entité affectée.</p>
+                                        )}
+                                    </td>
+                                    <td className="py-1 px-6 border">
+                                        <div
+                                            className={`${
+                                                user.statususer === "Validé"
+                                                    ? "bg-greenVh"
+                                                    : user.statususer ===
+                                                      "En attente"
+                                                    ? "bg-yellowVh"
+                                                    : user.statususer ===
+                                                      "Rejeté"
+                                                    ? "bg-redVh"
+                                                    : ""
+                                            } rounded-md text-white flex items-center justify-center py-1 px-1.5 mt-1`}
+                                        >
                                             <div className="relative font-semibold">
-                                                Bon
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="py-1 px-6 border">
-                                        <div className="w-full py-3 px-4 text-left text-[10px] text-gray-mid-description">
-                                            <div className="font-medium inline-block">
-                                                Le verset n’est pas trop claire.
-                                                Mieux préciser le verset de
-                                                base.
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="py-1 px-6 border">
-                                        <div className="relative rounded bg-stroke-light-blue border-blue border-[1px] border-solid box-border w-full overflow-hidden shrink-0 flex flex-row items-center justify-center py-1 px-2 gap-1 text-left text-[10px] text-blue font-outfit">
-                                            <div className="relative font-semibold">
-                                                Bon
+                                                {user.statususer}
                                             </div>
                                         </div>
                                     </td>
@@ -493,21 +513,7 @@ export default function UserIndex({ props, auth }) {
                                 </div>
 
                                 {/* Form Fields */}
-                                <div className="flex flex-col gap-4 text-gray">
-                                    {/* Profile Input Image */}
-                                    {/* <div className="flex flex-row items-center justify-center relative gap-2.5">
-                                        <img
-                                            className="w-20 h-20 z-0"
-                                            alt=""
-                                            src="./assets/icons/ellipse-cricle.svg"
-                                        />
-                                        <img
-                                            className="w-8 h-8 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-                                            alt=""
-                                            src="./assets/icons/camera-alt.svg"
-                                        />
-                                    </div> */}
-
+                                <div className="flex flex-col text-gray">
                                     {/* Profile Input Image */}
                                     <div className="flex flex-row items-center justify-center relative gap-2.5">
                                         <label
@@ -537,6 +543,10 @@ export default function UserIndex({ props, auth }) {
                                             className="hidden"
                                         />
                                     </div>
+                                    <InputError
+                                        message={errors.photo}
+                                        className="mt-0"
+                                    />
 
                                     {/*  Name and Surname */}
                                     <div className="flex flex-row gap-3 w-full">
@@ -605,7 +615,9 @@ export default function UserIndex({ props, auth }) {
                                             <SelectOption
                                                 placeholder="Selectionner type d'utilisateur"
                                                 options={type_utilisateurs}
-                                                error={errors.type_utilisateur_id}
+                                                error={
+                                                    errors.type_utilisateur_id
+                                                }
                                                 onChange={(e) =>
                                                     setData(
                                                         "type_utilisateur_id",
@@ -614,7 +626,9 @@ export default function UserIndex({ props, auth }) {
                                                 }
                                             />
                                             <InputError
-                                                message={errors.type_utilisateur_id}
+                                                message={
+                                                    errors.type_utilisateur_id
+                                                }
                                                 className="mt-0"
                                             />
                                         </div>
@@ -765,7 +779,9 @@ export default function UserIndex({ props, auth }) {
                                                 }
                                             />
                                             <InputError
-                                                message={errors.entite_origine_id}
+                                                message={
+                                                    errors.entite_origine_id
+                                                }
                                                 className="mt-0"
                                             />
                                         </div>
@@ -854,7 +870,9 @@ export default function UserIndex({ props, auth }) {
                                                     className="rounded-lg border-2 border-stroke-bulto p-1"
                                                 />
                                                 <InputError
-                                                    message={errors.affecter_entite}
+                                                    message={
+                                                        errors.affecter_entite
+                                                    }
                                                     className="mt-0"
                                                 />
                                             </div>

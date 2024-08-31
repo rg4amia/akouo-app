@@ -25,7 +25,7 @@ const NavItem = ({ href, icon, text, textColor,url,active,iconActive }) => {
         break;
         case '/record':
             if(active){
-                itemClass += ' bg-jauneVh rounded-lg';
+                itemClass += ' bg-yellowVh rounded-lg';
             }
         break;
         case '/user':
@@ -75,7 +75,7 @@ const Sidebar = () => {
       icon: akouoIcon,
       iconActive: iconWhiteAkouo,
       text: 'Enregistrements',
-      textColor: 'text-jauneVh font-medium',
+      textColor: 'text-yellowVh font-medium',
       active: currentUrl === '/record',
       url:"/record"
     },

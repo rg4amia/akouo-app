@@ -8,7 +8,7 @@ const Header = (props) => {
           alt="Ellipse"
           src={props.profileImageSrc || './assets/img/ellipse.png'}
         />
-        
+
         <div className="flex-col items-start justify-center">
           <div className="text-grayDescription text-sm">{props.welcomeMessage || 'Bienvenue'}</div>
           <div className="font-bold text-black text-xl">{props.userName || 'Joel KOFFI'}</div>
@@ -23,7 +23,7 @@ const Header = (props) => {
       {/* Notifications */}
       <div className="relative">
         <button
-          className="w-[40px] h-10 flex items-center justify-end bg-jauneVh rounded-xl text-sm text-white p-2"
+          className="w-[40px] h-10 flex items-center justify-end bg-yellowVh rounded-xl text-sm text-white p-2"
           aria-label="Notifications"
         >
           <svg

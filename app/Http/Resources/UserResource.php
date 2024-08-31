@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Helpers\FileUploader;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,11 +18,17 @@ class UserResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            //'username' => $this->username,
             'telephone' => $this->telephone,
             'email' => $this->email,
             'address' => $this->address,
             'joined' => $this->created_at->diffForHumans(),
+            'avatar' => $this->photo ?? FileUploader::get('public', $this->photo),
+            'pays' => @$this->pays->libelle,
+            'cellule' => @$this->cellule->libelle,
+            'categorie' =>  @$this->getRoleNames()[0],
+            'entiteaffecte' => @$this->entiteaffecte->pluck('libelle')->toArray(),
+            'statususer' => @$this->statususer->libelle,
+            'typeutilisateur' => @$this->typeutilisateur->libelle
         ];
     }
 }

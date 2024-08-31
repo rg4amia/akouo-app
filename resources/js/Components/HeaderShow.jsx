@@ -26,7 +26,7 @@ export default function HeaderShow(props){
                     {/* Notifications */}
                     <div className="relative">
                         <button
-                            className="w-[40px] h-10 flex items-center justify-end bg-jauneVh rounded-xl text-sm text-white p-2"
+                            className="w-[40px] h-10 flex items-center justify-end bg-yellowVh rounded-xl text-sm text-white p-2"
                             aria-label="Notifications"
                         >
                             <svg
