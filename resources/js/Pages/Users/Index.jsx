@@ -428,26 +428,28 @@ export default function UserIndex({ props, auth }) {
                                                     Voir
                                                 </div>
                                             </Link>
-                                            <Link
-                                                href={route(
-                                                    "user.destroy",
-                                                    user
-                                                )}
-                                                method="delete"
-                                                as="button"
-                                                className="flex flex-col items-start justify-end gap-2 text-left text-sm text-gray-700 font-text-s-medium"
-                                            >
-                                                <div className="cursor-pointer rounded-lg bg-base-white border-stroke-bulto border-[1px] border-solid flex flex-row items-center justify-center p-3 gap-1">
-                                                    <img
-                                                        className="w-5 relative h-5 overflow-hidden shrink-0"
-                                                        alt=""
-                                                        src={DeleteIcon}
-                                                    />
-                                                </div>
-                                                <div className="w-[59px] relative tracking-[-0.1px] leading-[20px] font-medium hidden">
-                                                    Headline
-                                                </div>
-                                            </Link>
+                                            {auth.user.id !== user.id && (
+                                                <Link
+                                                    href={route(
+                                                        "user.destroy",
+                                                        user
+                                                    )}
+                                                    method="delete"
+                                                    as="button"
+                                                    className="flex flex-col items-start justify-end gap-2 text-left text-sm text-gray-700 font-text-s-medium"
+                                                >
+                                                    <div className="cursor-pointer rounded-lg bg-base-white border-stroke-bulto border-[1px] border-solid flex flex-row items-center justify-center p-3 gap-1">
+                                                        <img
+                                                            className="w-5 relative h-5 overflow-hidden shrink-0"
+                                                            alt=""
+                                                            src={DeleteIcon}
+                                                        />
+                                                    </div>
+                                                    <div className="w-[59px] relative tracking-[-0.1px] leading-[20px] font-medium hidden">
+                                                        Headline
+                                                    </div>
+                                                </Link>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>
@@ -485,7 +487,7 @@ export default function UserIndex({ props, auth }) {
                     id="userModal"
                     className="fixed z-50 inset-0 bg-gray-900 bg-opacity-30 backdrop-blur-sm overflow-y-auto h-full px-4"
                 >
-                    <div className="relative top-3 mx-auto shadow-xl rounded-3xl  bg-white w-1/3">
+                    <div className="relative top-3 mx-auto shadow-xl rounded-3xl bg-white w-1/3">
                         <div className="flex justify-end p-2">
                             <button
                                 id="closeModal"

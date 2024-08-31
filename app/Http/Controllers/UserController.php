@@ -78,21 +78,17 @@ class UserController extends Controller
     public function store(UserStoreRequest $request)
     {
         try {
-            // Initialize an empty array to hold entity IDs
-            $entiteIds = [];
 
             // Loop through each item in the request's affecter_entite array and collect the 'value' fields
-            foreach ($request->affecter_entite as $value) {
-                $entiteIds[] = $value['value'];
-            }
+            $entiteIds = collect($request->affecter_entite)->pluck('value')->all();
 
             $entites = Entite::whereIn('id', $entiteIds)->get();
 
             //process save avatar profile user
             $avatarPath = null;
             if ($request->hasFile('photo')) {
-                $fileName = 'AVATAR_' . $request->nom . '_' . $request->prenoms  . '_' . $request->telephone . '.' . $request->photo->extension();
-                $avatarPath = FileUploader::upload($request, 'photo', 'public', 'AVATAR/' . Str::upper(str_replace(" ", "_", $fileName)));
+                $fileName = 'AVATAR_' . $request->nom . '_' . $request->prenoms  . '_' . $request->telephone;
+                $avatarPath = FileUploader::upload($request, 'photo', 'public', 'AVATAR/' . Str::upper(str_replace(" ", "_", $fileName  . '.' . $request->photo->extension())));
             }
 
             $role_r = Role::where('id', '=', $request->role)->firstOrFail();
