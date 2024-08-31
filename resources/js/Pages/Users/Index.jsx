@@ -485,7 +485,7 @@ export default function UserIndex({ props, auth }) {
                     id="userModal"
                     className="fixed z-50 inset-0 bg-gray-900 bg-opacity-30 backdrop-blur-sm overflow-y-auto h-full px-4"
                 >
-                    <div className="relative top-3 mx-auto shadow-xl rounded-3xl  bg-white w-1/3">
+                    <div className="top-3 mx-auto shadow-xl justify-between rounded-3xl bg-white w-1/3">
                         <div className="flex justify-end p-2">
                             <button
                                 id="closeModal"
@@ -530,7 +530,7 @@ export default function UserIndex({ props, auth }) {
                                 </div>
 
                                 {/* Form Fields */}
-                                <div className="flex flex-col text-gray">
+                                <div className="flex flex-col text-gray gap-3 gap-x-1">
                                     {/* Profile Input Image */}
                                     <div className="flex flex-row items-center justify-center relative gap-2.5">
                                         <label
