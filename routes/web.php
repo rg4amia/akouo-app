@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ParametreController;
 use App\Http\Controllers\DashBoardController;
 use App\Http\Controllers\EntiteController;
 use App\Http\Controllers\ProfileController;
@@ -22,6 +23,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('record', RecordController::class);
     Route::resource('user', UserController::class);
     Route::resource('entite', EntiteController::class);
+    Route::resource('parametre', ParametreController::class);
 });
 
 Route::get('/dashboard', [DashBoardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');

@@ -22,7 +22,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'address' => $this->address,
             'joined' => $this->created_at->diffForHumans(),
-            'avatar' => $this->photo ?? FileUploader::get('public', $this->photo),
+            'avatar' =>  $this->photo ? FileUploader::get('public', $this->photo) : null,
             'pays' => @$this->pays->libelle,
             'cellule' => @$this->cellule->libelle,
             'categorie' =>  @$this->getRoleNames()[0],

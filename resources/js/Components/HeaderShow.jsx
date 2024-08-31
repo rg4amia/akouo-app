@@ -5,7 +5,7 @@ export default function HeaderShow(props){
     return (
           <header className="sticky top-0 bg-white z-10 flex justify-between py-3 px-6 space-x-6 border-b border-gray-200">
                     {/* User Profile */}
-                    <Link href={ route('user.index') } className="flex items-center gap-3">
+                    <Link href={ route('user.index') } className="flex items-center gap-3" as="button">
                         <div className="relative rounded-lg bg-white border-text-unselected border-[2px] border-solid box-border w-full overflow-hidden flex flex-row items-start justify-start p-1 gap-2.5 text-left text-sm text-gray-mid-description font-medium-subtitle">
                             <img
                                 className="w-5 relative h-4 overflow-hidden shrink-0"

@@ -58,15 +58,20 @@ export default function UserIndex({ props, auth }) {
     const [stateError, setStateError] = useState(flash.error);
     const [stateInfo, setStateInfo] = useState(flash.info);
 
-    setTimeout(() => {
-        if (stateSuccess || stateError || stateInfo) setStateSuccess(null);
-        setStateError(null);
-        setStateInfo(null);
-    }, 3000);
-
     useEffect(() => {
         setStateError(flash.error);
+        setStateSuccess(flash.success);
+        setStateInfo(flash.info);
     }, [flash]);
+
+    useEffect(() => {
+        setTimeout(() => {
+            console.error(stateSuccess);
+            setStateSuccess(null);
+            setStateError(null);
+            setStateInfo(null);
+        }, 3000);
+    }, [stateSuccess, stateError, stateInfo]);
 
     const [params, setParams] = useState(filtered);
     const [pageNumber, setPageNumber] = useState([]);
@@ -134,8 +139,9 @@ export default function UserIndex({ props, auth }) {
         post(route("user.store"), {
             onSuccess: (e) => {
                 console.log(e.props.flash);
-                setStateSuccess(e.props.flash.success);
-                reset([]), closeModal();
+                //setStateSuccess(e.props.flash.success);
+                reset([]);
+                closeModal();
                 stateSuccess && MySwal.fire(stateSuccess);
             },
         });
@@ -329,11 +335,20 @@ export default function UserIndex({ props, auth }) {
                                     <td className="py-1 px-2 border">
                                         <div className="w-full relative border-neutral-600 box-border h-[79px] flex flex-row items-center justify-start p-3 gap-2 text-left text-3xs text-gray-description">
                                             {/*  <div className="w-10 relative rounded-[50%] bg-lightgray h-10"> */}
-                                            <img
-                                                className="w-10 relative rounded-[50%]"
-                                                alt=""
-                                                src={ellipse}
-                                            />
+
+                                            {user.avatar != null ? (
+                                                <img
+                                                    className="w-10 relative rounded-[50%]"
+                                                    alt=""
+                                                    src={user.avatar}
+                                                />
+                                            ) : (
+                                                <img
+                                                    className="w-10 relative rounded-[50%]"
+                                                    alt=""
+                                                    src={ellipse}
+                                                />
+                                            )}
                                             {/* </div> */}
                                             <div className="flex flex-row items-start justify-start">
                                                 <div className="flex flex-col items-start justify-start">
@@ -428,26 +443,28 @@ export default function UserIndex({ props, auth }) {
                                                     Voir
                                                 </div>
                                             </Link>
-                                            <Link
-                                                href={route(
-                                                    "user.destroy",
-                                                    user
-                                                )}
-                                                method="delete"
-                                                as="button"
-                                                className="flex flex-col items-start justify-end gap-2 text-left text-sm text-gray-700 font-text-s-medium"
-                                            >
-                                                <div className="cursor-pointer rounded-lg bg-base-white border-stroke-bulto border-[1px] border-solid flex flex-row items-center justify-center p-3 gap-1">
-                                                    <img
-                                                        className="w-5 relative h-5 overflow-hidden shrink-0"
-                                                        alt=""
-                                                        src={DeleteIcon}
-                                                    />
-                                                </div>
-                                                <div className="w-[59px] relative tracking-[-0.1px] leading-[20px] font-medium hidden">
-                                                    Headline
-                                                </div>
-                                            </Link>
+                                            {auth.user.id !== user.id && (
+                                                <Link
+                                                    href={route(
+                                                        "user.destroy",
+                                                        user
+                                                    )}
+                                                    method="delete"
+                                                    as="button"
+                                                    className="flex flex-col items-start justify-end gap-2 text-left text-sm text-gray-700 font-text-s-medium"
+                                                >
+                                                    <div className="cursor-pointer rounded-lg bg-base-white border-stroke-bulto border-[1px] border-solid flex flex-row items-center justify-center p-3 gap-1">
+                                                        <img
+                                                            className="w-5 relative h-5 overflow-hidden shrink-0"
+                                                            alt=""
+                                                            src={DeleteIcon}
+                                                        />
+                                                    </div>
+                                                    <div className="w-[59px] relative tracking-[-0.1px] leading-[20px] font-medium hidden">
+                                                        Headline
+                                                    </div>
+                                                </Link>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>
@@ -485,7 +502,7 @@ export default function UserIndex({ props, auth }) {
                     id="userModal"
                     className="fixed z-50 inset-0 bg-gray-900 bg-opacity-30 backdrop-blur-sm overflow-y-auto h-full px-4"
                 >
-                    <div className="top-3 mx-auto shadow-xl justify-between rounded-3xl bg-white w-1/3">
+                    <div className="relative top-3 mx-auto shadow-xl rounded-3xl  bg-white w-1/3">
                         <div className="flex justify-end p-2">
                             <button
                                 id="closeModal"

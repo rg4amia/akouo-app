@@ -35,7 +35,7 @@ class UserStoreRequest extends FormRequest
             'status_user_id' => 'required|integer',
             'affecter_entite' => 'required',
             'cellule_id' => 'required|integer',
-            'photo' => 'nullable|max:2024|mimes:png,jpg,jpeg'
+            'photo' => 'required|file|max:2024|mimes:png,jpg,jpeg'
         ];
     }
 
