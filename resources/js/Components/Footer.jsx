@@ -1,3 +1,5 @@
+import logoVh from "../../../public/assets/img/logo_vh_multi.png";
+
 export default function Footer() {
     return (
         <div className="flex flex-col items-start m-4">
@@ -22,7 +24,7 @@ export default function Footer() {
                     <img
                         className="w-[73px] relative h-10 object-cover"
                         alt=""
-                        src="./assets/img/logo_vh_multi.png"
+                        src={logoVh}
                     />
                 </div>
             </div>

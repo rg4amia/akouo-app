@@ -1,19 +1,25 @@
+import TextInput from "@/Components/TextInput";
+import BaseLayout from "@/Layouts/BaseLayout";
+import { Head } from "@inertiajs/react";
 import { useState } from "react";
+import userCircle from '../../../../public/assets/icons/user-circle.svg';
 
-export default function UserShow({auth,user}) {
-
+export default function UserShow({ auth, user }) {
     //define type header
-    const [state, setState] = useState(true);
+    const [state, setState] = useState(false);
+
+    console.log(user);
 
     return (
         <BaseLayout state={state} auth={auth}>
-            <div className="flex flex-col items-start">
+            <Head title="Détails de l'utilisateur" />
+            <div className="p-6">
                 <div className="flex flex-col items-start justify-start text-[24px] mb-4 w-full">
                     <div className="flex flex-row items-center justify-start gap-2">
                         <img
                             className="w-6 h-6"
                             alt=""
-                            src="./assets/icons/user-circle.svg"
+                            src={userCircle}
                         />
                         <div className="relative font-semibold text-blueVh">
                             Informations de l’utilisateur
@@ -41,7 +47,8 @@ export default function UserShow({auth,user}) {
                         </div>
                         <div className="flex flex-row items-center justify-start">
                             <div className="relative">
-                                Compte créé le 12.12.2023
+                                Compte créé le{" "}
+                                {new Date(user.created_at).toLocaleDateString()}
                             </div>
                         </div>
                     </div>
@@ -50,26 +57,12 @@ export default function UserShow({auth,user}) {
                     <div className="flex flex-row items-start justify-start gap-3 w-full">
                         <div className="flex flex-col items-start justify-start gap-1">
                             <label for="name" className="relative">
-                                <b>Nom*</b>
+                                <b>Nom & Prénoms</b>
                             </label>
-                            <input
-                                type="text"
-                                id="name"
-                                className="rounded-lg bg-white border-stroke-bulto border-[2px] border-solid p-3 text-sm text-grayish-middle font-medium-subtitle"
-                                value="KONE"
-                            />
-                        </div>
-
-                        {/* Surname Field */}
-                        <div className="flex flex-col items-start justify-start gap-1">
-                            <label for="surname" className="relative">
-                                <b>Prénoms*</b>
-                            </label>
-                            <input
-                                type="text"
-                                id="surname"
-                                className="rounded-lg bg-white border-stroke-bulto border-[2px] border-solid p-3 text-sm text-grayish-middle font-medium-subtitle"
-                                value="Josianne"
+                            <TextInput
+                                value={user.name}
+                                disabled={true}
+                                className="w-full"
                             />
                         </div>
 

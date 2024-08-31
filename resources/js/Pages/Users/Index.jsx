@@ -12,6 +12,8 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import FlashMessage from "@/Components/FlashMessage";
 import InputError from "@/Components/InputError";
+import DeleteIcon from "../../../../public/assets/icons/delete.svg";
+import EyeIcon from "../../../../public/assets/icons/eye.svg";
 
 export default function UserIndex({ props, auth }) {
     /* Sweet alert Config */
@@ -62,7 +64,10 @@ export default function UserIndex({ props, auth }) {
         setStateInfo(null);
     }, 3000);
 
-    const { get } = useForm();
+    useEffect(() => {
+        setStateError(flash.error);
+    }, [flash]);
+
     const [params, setParams] = useState(filtered);
     const [pageNumber, setPageNumber] = useState([]);
 
@@ -348,7 +353,7 @@ export default function UserIndex({ props, auth }) {
                                         </div>
                                     </td>
                                     <td className="py-1 px-2 border">
-                                        <span class="font-medium">
+                                        <span className="font-medium">
                                             {" "}
                                             {user.pays}
                                         </span>
@@ -409,28 +414,40 @@ export default function UserIndex({ props, auth }) {
                                     </td>
                                     <td className="py-1 px-6 border">
                                         <div className="relative border-neutral-600 h-[79px] flex flex-row items-center justify-start py-3 px-4 gap-2 text-center text-xs text-blackish font-outfit-semibold-12">
-                                            <div className="rounded-lg bg-base-white border-stroke-bulto border-[2px] border-solid flex flex-row items-center justify-center p-3 gap-1">
+                                            <Link
+                                                href={route("user.show", user)}
+                                                as="button"
+                                                className="cursor-pointer rounded-lg bg-base-white border-stroke-bulto border-[1px] border-solid flex flex-row items-center justify-center p-3 gap-1"
+                                            >
                                                 <img
-                                                    className="w-4 relative h-4 overflow-hidden shrink-0"
+                                                    className="w-5 relative h-5 overflow-hidden shrink-0"
                                                     alt=""
-                                                    src="./assets/icons/eye.svg"
+                                                    src={EyeIcon}
                                                 />
                                                 <div className="w-[23px] relative font-semibold hidden">
                                                     Voir
                                                 </div>
-                                            </div>
-                                            <div className="flex flex-col items-start justify-end gap-1.5 text-left text-sm text-gray-700 font-text-s-medium">
-                                                <div className="self-stretch shadow-[0px_1px_2px_rgba(16,_24,_40,_0.04)] rounded-lg bg-base-white border-red-delete border-[2px] border-solid box-border h-10 flex flex-row items-center justify-start p-2.5 gap-3">
+                                            </Link>
+                                            <Link
+                                                href={route(
+                                                    "user.destroy",
+                                                    user
+                                                )}
+                                                method="delete"
+                                                as="button"
+                                                className="flex flex-col items-start justify-end gap-2 text-left text-sm text-gray-700 font-text-s-medium"
+                                            >
+                                                <div className="cursor-pointer rounded-lg bg-base-white border-stroke-bulto border-[1px] border-solid flex flex-row items-center justify-center p-3 gap-1">
                                                     <img
                                                         className="w-5 relative h-5 overflow-hidden shrink-0"
                                                         alt=""
-                                                        src="./assets/icons/delete.svg"
+                                                        src={DeleteIcon}
                                                     />
                                                 </div>
                                                 <div className="w-[59px] relative tracking-[-0.1px] leading-[20px] font-medium hidden">
                                                     Headline
                                                 </div>
-                                            </div>
+                                            </Link>
                                         </div>
                                     </td>
                                 </tr>

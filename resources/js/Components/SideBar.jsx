@@ -14,7 +14,7 @@ import logoAkouo from '../../../public/assets/img/logos/logo.png';
 const NavItem = ({ href, icon, text, textColor,url,active,iconActive }) => {
 
     const currentUrl = window.location.pathname;
-    let itemClass = 'ml-2 mr-3 mt-1';
+    let itemClass = 'ml-2 mr-3 mt-1 cursor-pointer';
     let textColorMenu = '';
 
     switch (url) {
@@ -48,10 +48,10 @@ const NavItem = ({ href, icon, text, textColor,url,active,iconActive }) => {
 
     return (
         <div className={itemClass}>
-        <Link href={href} as="button" className={`flex  items-center px-8 py-2 ${ active ? 'text-white font-bold': textColor} hover:text-greenVh group`} aria-label={text}>
-            <img className="h-5 w-5 mr-2" loading="lazy" alt={`${text} Icon`} src={`${ active ? iconActive : icon}`} />
-            {text}
-        </Link>
+            <Link href={href} as="button" className={`flex  items-center px-8 py-2 ${ active ? 'text-white font-bold': textColor} hover:text-greenVh group`} aria-label={text}>
+                <img className="h-5 w-5 mr-2" loading="lazy" alt={`${text} Icon`} src={`${ active ? iconActive : icon}`} />
+                {text}
+            </Link>
         </div>
     );
 };

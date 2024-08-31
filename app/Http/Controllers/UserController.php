@@ -130,7 +130,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return Inertia::render('User/Show', ['user' => $user]);
+        return Inertia::render('Users/Show', ['user' => $user]);
     }
 
     /**
