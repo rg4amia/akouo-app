@@ -93,8 +93,10 @@ const NavItem = ({
                             key={index}
                             href={item.href}
                             className={`flex cursor-pointer items-center px-4 py-2 rounded-md w-[193px] text-sm  ${
-                                item.active
-                                    ? "text-blueVh font-bold bg-white"
+                                active
+                                    ? item.activeSubMenu
+                                        ? "text-blueVh font-medium bg-white"
+                                        : `text-white font-medium`
                                     : textColor
                             } focus:outline-none`}
                         >
@@ -145,18 +147,19 @@ const Sidebar = () => {
             iconActive: btnIconUsersTrans,
             text: "Utilisateurs",
             textColor: "text-blueVh font-medium",
-            active: currentUrl === "/user",
+            active: currentUrl === "/user" || currentUrl == "/role",
             url: "/user",
             submenuItems: [
                 {
                     href: route("user.index"),
                     icon: <UserIcon className="w-4 h-4" />,
                     text: "Liste utilisateur",
-                    active: currentUrl === "/user",
+                    activeSubMenu: currentUrl === "/user",
                 },
                 {
                     href: route("parametre.index"),
                     icon: <CogIcon className="w-4 h-4" />,
+                    activeSubMenu: currentUrl === "/role",
                     text: "Role & Permission",
                 },
             ],

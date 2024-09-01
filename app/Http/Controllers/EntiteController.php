@@ -2,17 +2,49 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\EntiteFullResource;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Http\Resources\PaysResource;
+use App\Http\Resources\EntiteResource;
+use App\Http\Resources\RattachementResource;
+use App\Http\Resources\TypeEntiteResource;
+use App\Http\Resources\UserResource;
+use App\Models\Entite;
+use App\Models\Pays;
+use App\Models\Rattachement;
+use App\Models\TypeEntite;
+use App\Models\User;
 
 class EntiteController extends Controller
 {
+
+    public $loadDefault = 10;
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Inertia::render('Entite/Index');
+        $entites = (
+            EntiteFullResource::collection(Entite::paginate($request->load))
+        )->additional([
+            'attributes' => [
+                'total' => Entite::count(),
+                'per_page' => 10
+            ],
+            'filtered' => [
+                'load' => $request->load ?? $this->loadDefault
+            ],
+            'pays'              => (PaysResource::collection(Pays::all())),
+            'type_entites'      => (TypeEntiteResource::collection(TypeEntite::all())),
+            'entites'           => (EntiteResource::collection(Entite::all())),
+            'rattachements'     => (RattachementResource::collection(Rattachement::all())),
+            'users'             => (UserResource::collection(User::where('id', '!=', 1)->get()))
+        ]);
+
+        return Inertia::render('Entite/Index', [
+            'entites' => $entites
+        ]);
     }
 
     /**

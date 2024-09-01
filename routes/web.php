@@ -5,6 +5,7 @@ use App\Http\Controllers\DashBoardController;
 use App\Http\Controllers\EntiteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RecordController;
+use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -18,12 +19,12 @@ Route::get('/', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard'); */
 
-
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('record', RecordController::class);
     Route::resource('user', UserController::class);
     Route::resource('entite', EntiteController::class);
     Route::resource('parametre', ParametreController::class);
+    Route::resource('role', RolePermissionController::class);
 });
 
 Route::get('/dashboard', [DashBoardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');

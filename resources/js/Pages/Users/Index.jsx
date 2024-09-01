@@ -76,7 +76,7 @@ export default function UserIndex({ props, auth }) {
     const [params, setParams] = useState(filtered);
     const [pageNumber, setPageNumber] = useState([]);
 
-    const { data, setData, reset, processing, post, errors } = useForm({
+    const { data, setData, reset, processing, post,get, errors } = useForm({
         nom: "",
         prenoms: "",
         telephone: "",
@@ -91,7 +91,6 @@ export default function UserIndex({ props, auth }) {
         cellule_id: "",
         photo: "",
     });
-
     /*  const reload = useCallback(
         debounce((query) => {
             get(route("user.index"), pickBy(query), {
@@ -131,6 +130,11 @@ export default function UserIndex({ props, auth }) {
 
     const handleChangePays = (e) => {
         setData("pay_id", e.target.value);
+    };
+
+    const handledSearch = (e) => {
+        //get(route("user.index", e.target.value));
+        console.log(e.target.value);
     };
 
     /* Function d'ajout d'utilisateur */
@@ -206,16 +210,17 @@ export default function UserIndex({ props, auth }) {
                     </div>
                 </div>
 
-                <div className="relative font-outfit m-3 flex">
+                {/* Champ Recherche des utilisateurs */}
+                <div className="relative font-outfit mt-3 mb-3 flex">
                     <input
                         type="text"
-                        id="seach"
-                        name="seach"
-                        placeholder="Recherche..."
+                        id="search"
+                        name="search"
+                        placeholder="Recherche ..."
                         className="w-[400px] px-10 py-2 border border-stokelightblue rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E1EFFC]"
+                        onChange={handledSearch}
                     />
-
-                    <div className="inset-y-0 left-1 pl-3 top-0 flex items-center pointer-events-none">
+                    <div className="absolute inset-y-0 left-0 pl-3 top-0 flex items-center pointer-events-none">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="size-5 text-grayDescription"
@@ -474,26 +479,41 @@ export default function UserIndex({ props, auth }) {
                 </div>
             </div>
 
-            <ul className="flex items-center gap-x-1 mt-10">
-                {meta.links.map((item, index) => (
-                    <Link
-                        disabled={item.active == true ? true : false}
-                        as="button"
-                        className={`${
-                            item.active == true
-                                ? "text-white cursor-default bg-green-vh"
-                                : "text-gray-800"
-                        } py-[7px] px-3 rounded-lg flex items-center justify-center box-border`}
-                        href={item.url || ""}
+            <ul className="flex w-full justify-between items-center gap-x-1 mt-10 p-6">
+                <div className="flex items-center justify-end">
+                    {meta.links.map((item, index) => (
+                        <Link
+                            disabled={item.url == null ? true : false}
+                            as="button"
+                            className={`${
+                                item.url != null
+                                    ? "text-white cursor-default bg-green-vh"
+                                    : "text-gray-800"
+                            } py-[7px] px-3 rounded-lg flex items-center justify-center box-border`}
+                            href={item.url || ""}
+                        >
+                            <span
+                                className="font-semibold border-stroke-bulto"
+                                dangerouslySetInnerHTML={{
+                                    __html: item.label,
+                                }}
+                            />
+                        </Link>
+                    ))}
+                </div>
+                <div className="flex items-center justify-end">
+                    <select
+                        id="load"
+                        name="load"
+                        onChange={onChange}
+                        value={params.load}
+                        className="rounded-xl border-stroke-bulto"
                     >
-                        <span
-                            className="font-semibold"
-                            dangerouslySetInnerHTML={{
-                                __html: item.label,
-                            }}
-                        />
-                    </Link>
-                ))}
+                        {pageNumber.map((page, index) => (
+                            <option key={index}>{page}</option>
+                        ))}
+                    </select>
+                </div>
             </ul>
             {/* start modal */}
 

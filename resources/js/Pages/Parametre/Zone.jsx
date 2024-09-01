@@ -1,118 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import BaseLayout from "@/Layouts/BaseLayout";
-import { Head, useForm, usePage } from "@inertiajs/react";
 
-export default function EntiteIndex({ props, auth }) {
+const [state, setState] = useState(true);
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const openModal = () => {
-        setIsModalOpen(true);
-    };
-
-    const {
-        data: entite,
-        type_entites,
-        entites,
-        rattachements,
-        pays,
-        meta,
-        users,
-        filtered,
-        attributes,
-    } = usePage().props;
-
-    const closeModal = () => {
-        setIsModalOpen(false);
-    };
-
-    const { data, setData, reset, processing, post, get, errors } = useForm({
-        libelle: "",
-        pay_id: "",
-        zone_id: "",
-        type_entite_id: "",
-        rattachement_id: "",
-        entite_origine_id: "",
-        link_maps: "",
-    });
-
-    const [state, setState] = useState(true);
-
-    const [params, setParams] = useState(filtered);
-    const [pageNumber, setPageNumber] = useState([]);
-
-    useEffect(() => {
-        let numbers = [];
-        for (
-            //attributes
-            let i = attributes.per_page;
-            i <= meta.total / attributes.per_page;
-            i = i + attributes.per_page
-        ) {
-            numbers.push(i);
-        }
-        setPageNumber(numbers);
-        //MySwal.fire('mess')
-    }, []);
-
-    /* Flash Message */
-    const { flash } = usePage().props;
-    const [stateSuccess, setStateSuccess] = useState("");
-    const [stateError, setStateError] = useState(flash.error);
-    const [stateInfo, setStateInfo] = useState(flash.info);
-
-    useEffect(() => {
-        setStateError(flash.error);
-        setStateSuccess(flash.success);
-        setStateInfo(flash.info);
-    }, [flash]);
-
-    useEffect(() => {
-        setTimeout(() => {
-            console.error(stateSuccess);
-            setStateSuccess(null);
-            setStateError(null);
-            setStateInfo(null);
-        }, 3000);
-    }, [stateSuccess, stateError, stateInfo]);
-
-    const onChange = (event) =>
-        setParams({ ...params, [event.target.name]: event.target.value });
-
-    /* Function pour la création d'entité */
-    const submit = (e) => {
-        e.preventDefault();
-        post(route("entite.store"), {
-            onSuccess: (e) => {
-                console.log(e.props.flash);
-                //setStateSuccess(e.props.flash.success);
-                reset([]);
-                closeModal();
-                stateSuccess && MySwal.fire(stateSuccess);
-            },
-        });
-    };
-
+export default function Zone({ auth }) {
     return (
         <BaseLayout auth={auth} state={state}>
-            <Head title="Entités" />
-            {stateSuccess && (
-                <div className="bg-green-100 border-lb-4 border-green-500 text-green-700 p-4 mb-4">
-                    <p>{stateSuccess}</p>
-                </div>
-            )}
-
-            {stateError && (
-                <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
-                    <p>{stateError}</p>
-                </div>
-            )}
-            {stateInfo && (
-                <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4">
-                    <p>{stateInfo}</p>
-                </div>
-            )}
-
             <div className="flex flex-col items-start m-4" role="group">
                 <div className="flex flex-row justify-between items-center w-full">
                     <div>
@@ -282,84 +175,82 @@ export default function EntiteIndex({ props, auth }) {
                             </tr>
                         </thead>
                         <tbody className="text-gray-600 text-xs">
-                            {entite.map((entite, index) => (
-                                <tr className="" key={index}>
-                                    <td className="py-1 px-6 border">
-                                        <b>{entite.libelle}</b>
-                                    </td>
-                                    <td className="py-1 px-6 border">
-                                        <div className="">Côte d'ivoire</div>
-                                    </td>
-                                    <td className="py-1 px-6 border">
-                                        <div className="">Abidjan</div>
-                                    </td>
-                                    <td className="py-1 px-6 border">
-                                        <div className="relative rounded bg-greenVh w-full overflow-hidden flex flex-row items-center justify-center py-1 px-2 box-border text-left text-[10px] text-white font-outfit">
-                                            <b className="relative">Centre</b>
-                                        </div>
-                                    </td>
-                                    <td className="py-1 px-6 border">
-                                        <div className="w-full relative box-border h-[79px] flex flex-col items-center justify-center p-3 text-left text-[10px] text-black font-outfit">
-                                            <b className="relative">
-                                                Centre Kodesh
-                                            </b>
-                                        </div>
-                                    </td>
-                                    <td className="py-1 px-6 border">
-                                        <div className="relative text-[10px] font-semibold font-outfit text-gray-mid-description text-left">
-                                            Aucune
-                                        </div>
-                                    </td>
+                            <tr className="">
+                                <td className="py-1 px-6 border">
+                                    <b>Kodesh</b>
+                                </td>
+                                <td className="py-1 px-6 border">
+                                    <div className="">Côte d'ivoire</div>
+                                </td>
+                                <td className="py-1 px-6 border">
+                                    <div className="">Abidjan</div>
+                                </td>
+                                <td className="py-1 px-6 border">
+                                    <div className="relative rounded bg-greenVh w-full overflow-hidden flex flex-row items-center justify-center py-1 px-2 box-border text-left text-[10px] text-white font-outfit">
+                                        <b className="relative">Centre</b>
+                                    </div>
+                                </td>
+                                <td className="py-1 px-6 border">
+                                    <div className="w-full relative box-border h-[79px] flex flex-col items-center justify-center p-3 text-left text-[10px] text-black font-outfit">
+                                        <b className="relative">
+                                            Centre Kodesh
+                                        </b>
+                                    </div>
+                                </td>
+                                <td className="py-1 px-6 border">
+                                    <div className="relative text-[10px] font-semibold font-outfit text-gray-mid-description text-left">
+                                        Aucune
+                                    </div>
+                                </td>
 
-                                    <td className="py-1 px-6 border">
-                                        <div className="w-full relative h-[79px] flex flex-row flex-wrap items-center justify-start py-3 px-4 gap-1 text-left text-3xs text-gray-mid-description font-outfit">
-                                            <div className="rounded bg-bg overflow-hidden flex flex-row items-center justify-center p-1 gap-2.5">
-                                                <div className="relative font-normal">
-                                                    Mohammed S.
-                                                </div>
-                                            </div>
-                                            <div className="rounded bg-bg overflow-hidden flex flex-row items-center justify-center p-1 gap-2.5">
-                                                <div className="relative font-normal">
-                                                    Liliane S.
-                                                </div>
-                                            </div>
-                                            <div className="rounded bg-bg overflow-hidden flex flex-row items-center justify-center p-1 gap-2.5">
-                                                <div className="relative font-normal">
-                                                    Gérard K.
-                                                </div>
-                                            </div>
-                                            <div className="rounded bg-bg overflow-hidden flex flex-row items-center justify-center p-1 gap-2.5">
-                                                <div className="relative font-normal">
-                                                    Thierry N.
-                                                </div>
+                                <td className="py-1 px-6 border">
+                                    <div className="w-full relative h-[79px] flex flex-row flex-wrap items-center justify-start py-3 px-4 gap-1 text-left text-3xs text-gray-mid-description font-outfit">
+                                        <div className="rounded bg-bg overflow-hidden flex flex-row items-center justify-center p-1 gap-2.5">
+                                            <div className="relative font-normal">
+                                                Mohammed S.
                                             </div>
                                         </div>
-                                    </td>
-                                    <td>
-                                        <a
-                                            href="details_entite.html"
-                                            className="w-full relative box-border h-[79px] flex flex-row items-center justify-center py-3 px-4 gap-2 text-center text-xs text-blackish font-outfit-semibold-12"
-                                        >
-                                            <div
-                                                className="rounded-lg bg-white border-stroke-bulto border-[2px] border-solid flex flex-row items-center justify-center p-1 gap-1 cursor-pointer"
-                                                id="pDFButtonContainer"
-                                            >
-                                                <img
-                                                    className="w-4 relative h-4 overflow-hidden shrink-0"
-                                                    alt=""
-                                                    src="./assets/icons/eye.svg"
-                                                />
-                                                <div className="w-[23px] relative font-semibold hidden">
-                                                    Voir
-                                                </div>
+                                        <div className="rounded bg-bg overflow-hidden flex flex-row items-center justify-center p-1 gap-2.5">
+                                            <div className="relative font-normal">
+                                                Liliane S.
                                             </div>
-                                            <div className="relative text-[10px] font-semibold text-gray-description text-left">
+                                        </div>
+                                        <div className="rounded bg-bg overflow-hidden flex flex-row items-center justify-center p-1 gap-2.5">
+                                            <div className="relative font-normal">
+                                                Gérard K.
+                                            </div>
+                                        </div>
+                                        <div className="rounded bg-bg overflow-hidden flex flex-row items-center justify-center p-1 gap-2.5">
+                                            <div className="relative font-normal">
+                                                Thierry N.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a
+                                        href="details_entite.html"
+                                        className="w-full relative box-border h-[79px] flex flex-row items-center justify-center py-3 px-4 gap-2 text-center text-xs text-blackish font-outfit-semibold-12"
+                                    >
+                                        <div
+                                            className="rounded-lg bg-white border-stroke-bulto border-[2px] border-solid flex flex-row items-center justify-center p-1 gap-1 cursor-pointer"
+                                            id="pDFButtonContainer"
+                                        >
+                                            <img
+                                                className="w-4 relative h-4 overflow-hidden shrink-0"
+                                                alt=""
+                                                src="./assets/icons/eye.svg"
+                                            />
+                                            <div className="w-[23px] relative font-semibold hidden">
                                                 Voir
                                             </div>
-                                        </a>
-                                    </td>
-                                </tr>
-                            ))}
+                                        </div>
+                                        <div className="relative text-[10px] font-semibold text-gray-description text-left">
+                                            Voir
+                                        </div>
+                                    </a>
+                                </td>
+                            </tr>
                             {/* Additional rows can be added similarly */}
                         </tbody>
                     </table>

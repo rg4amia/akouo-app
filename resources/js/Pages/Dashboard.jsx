@@ -12,10 +12,12 @@ export default function Dashboard({ auth, data }) {
 
     return (
         <BaseLayout state={state} auth={auth}>
-
             <Head title="Tableau de Board" />
 
-            <div className="flex flex-col items-start m-4 overflow-y-auto" role="group">
+            <div
+                className="flex flex-col items-start m-4 overflow-y-auto"
+                role="group"
+            >
                 <div className="font-outfit text-2xl font-semibold flex items-center">
                     <img
                         className="h-5 w-5 mr-2"
@@ -27,8 +29,34 @@ export default function Dashboard({ auth, data }) {
                 </div>
                 <span> Vue générale des enregistrements et utilisateurs </span>
             </div>
-
             <div className="relative font-outfit m-3 flex">
+                <input
+                    type="text"
+                    id="search"
+                    name="search"
+                    placeholder="Recherche ..."
+                    className="w-[400px] px-10 py-3 border border-stokelightblue rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E1EFFC]"
+                    onChange={(e) => console.log(e.target.value)}
+                />
+                <div className="absolute inset-y-0 left-0 pl-3 top-0 flex items-center pointer-events-none">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="size-5 text-grayDescription"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="currentColor"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                        />
+                    </svg>
+                </div>
+            </div>
+
+            {/* <div className="relative font-outfit m-3 flex">
                 <input
                     type="text"
                     id="seach"
@@ -52,7 +80,7 @@ export default function Dashboard({ auth, data }) {
                         />
                     </svg>
                 </div>
-            </div>
+            </div> */}
 
             <div className="flex flex-row p-3 space-x-3 justify-between">
                 {/*div className="w-[112px] h-full border-stokelightblue border p-2 rounded-lg"*/}

@@ -25,7 +25,7 @@ class Entite extends Model
         return $this->belongsToMany(User::class);
     }
 
-    public function TypeEntite(){
+    public function typeentite(){
         return $this->belongsTo(TypeEntite::class,'state','id');
     }
 
@@ -41,4 +41,17 @@ class Entite extends Model
     {
         return $this->belongsToMany(User::class, 'entite_user', 'entite_id', 'user_id')->withTimestamps();
     }
+
+    public function zone() {
+        return $this->belongsTo(Zone::class);
+    }
+
+    public function entite_origine() {
+        return $this->belongsTo(Entite::class, 'entite_origine_id');
+    }
+
+    public function pays() {
+        return $this->belongsTo(Pays::class,'pay_id', 'id');
+    }
+
 }
