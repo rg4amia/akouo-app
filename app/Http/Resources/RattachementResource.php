@@ -16,7 +16,7 @@ class RattachementResource extends JsonResource
     {
         return [
             'value'     => $this->id,
-            'label'     => $this->name,
+            'label'     => $this->libelle,
         ];
     }
 }

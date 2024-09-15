@@ -19,7 +19,8 @@ class RecordAudio extends Model
         'observation',
         'date_recording',
         'predicateur_id',
-        'user_id'
+        'user_id',
+        'entite_id'
     ];
 
     protected $table = 'record_audios';
@@ -34,5 +35,9 @@ class RecordAudio extends Model
 
     public function zone() {
         return $this->belongsTo(Zone::class, 'zone_id', 'id');
+    }
+
+    public function entite() {
+        return $this->belongsTo(Entite::class, 'entite_id', 'id');
     }
 }

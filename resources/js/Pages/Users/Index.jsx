@@ -14,6 +14,7 @@ import FlashMessage from "@/Components/FlashMessage";
 import InputError from "@/Components/InputError";
 import DeleteIcon from "../../../../public/assets/icons/delete.svg";
 import EyeIcon from "../../../../public/assets/icons/eye.svg";
+import { toast } from "react-toastify";
 
 export default function UserIndex({ props, auth }) {
     /* Sweet alert Config */
@@ -54,29 +55,17 @@ export default function UserIndex({ props, auth }) {
 
     /* Flash Message */
     const { flash } = usePage().props;
-    const [stateSuccess, setStateSuccess] = useState("");
-    const [stateError, setStateError] = useState(flash.error);
-    const [stateInfo, setStateInfo] = useState(flash.info);
 
     useEffect(() => {
-        setStateError(flash.error);
-        setStateSuccess(flash.success);
-        setStateInfo(flash.info);
+        flash.success && toast.success(flash.success);
+        flash.error && toast.error(flash.error);
+        flash.info && toast.error(flash.info);
     }, [flash]);
-
-    useEffect(() => {
-        setTimeout(() => {
-            console.error(stateSuccess);
-            setStateSuccess(null);
-            setStateError(null);
-            setStateInfo(null);
-        }, 3000);
-    }, [stateSuccess, stateError, stateInfo]);
 
     const [params, setParams] = useState(filtered);
     const [pageNumber, setPageNumber] = useState([]);
 
-    const { data, setData, reset, processing, post,get, errors } = useForm({
+    const { data, setData, reset, processing, post, get, errors } = useForm({
         nom: "",
         prenoms: "",
         telephone: "",
@@ -89,7 +78,7 @@ export default function UserIndex({ props, auth }) {
         status_user_id: "",
         affecter_entite: "",
         cellule_id: "",
-        photo: "",
+        photo: [],
     });
     /*  const reload = useCallback(
         debounce((query) => {
@@ -134,7 +123,7 @@ export default function UserIndex({ props, auth }) {
 
     const handledSearch = (e) => {
         //get(route("user.index", e.target.value));
-        console.log(e.target.value);
+        //console.log(e.target.value);
     };
 
     /* Function d'ajout d'utilisateur */
@@ -142,11 +131,9 @@ export default function UserIndex({ props, auth }) {
         e.preventDefault();
         post(route("user.store"), {
             onSuccess: (e) => {
-                console.log(e.props.flash);
-                //setStateSuccess(e.props.flash.success);
                 reset([]);
                 closeModal();
-                stateSuccess && MySwal.fire(stateSuccess);
+               // e.props.flash.success && toast.success(e.props.flash.success);
             },
         });
     };
@@ -154,7 +141,7 @@ export default function UserIndex({ props, auth }) {
     return (
         <BaseLayout state={state} auth={auth}>
             <Head title="Gestion des Utilisateurs" />
-            {stateSuccess && (
+            {/*  {stateSuccess && (
                 <div className="bg-green-100 border-lb-4 border-green-500 text-green-700 p-4 mb-4">
                     <p>{stateSuccess}</p>
                 </div>
@@ -169,7 +156,8 @@ export default function UserIndex({ props, auth }) {
                 <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4">
                     <p>{stateInfo}</p>
                 </div>
-            )}
+            )} */}
+
             <div className="flex flex-col items-start m-4" role="group">
                 <div className="flex flex-row justify-between items-center w-full">
                     <div>

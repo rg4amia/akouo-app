@@ -19,6 +19,8 @@ class Entite extends Model
         'type_entite_id',
         'zone_id',
         'link_maps',
+        'created_by',
+        'zone_id',
     ];
 
     public function user(){
@@ -49,9 +51,12 @@ class Entite extends Model
     public function entite_origine() {
         return $this->belongsTo(Entite::class, 'entite_origine_id');
     }
-
     public function pays() {
         return $this->belongsTo(Pays::class,'pay_id', 'id');
+    }
+
+    public function recordaudio() {
+        return $this->hasMany(RecordAudio::class, 'entite_id', 'id');
     }
 
 }

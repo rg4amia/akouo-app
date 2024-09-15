@@ -77,6 +77,8 @@ class UserController extends Controller
      */
     public function store(UserStoreRequest $request)
     {
+        //dd($request->all());
+
         try {
             // Loop through each item in the request's affecter_entite array and collect the 'value' fields
             $entiteIds = collect($request->affecter_entite)->pluck('value')->all();

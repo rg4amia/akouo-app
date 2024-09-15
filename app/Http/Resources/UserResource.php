@@ -28,7 +28,9 @@ class UserResource extends JsonResource
             'categorie' =>  @$this->getRoleNames()[0],
             'entiteaffecte' => @$this->entiteaffecte->pluck('libelle')->toArray(),
             'statususer' => @$this->statususer->libelle,
-            'typeutilisateur' => @$this->typeutilisateur->libelle
+            'typeutilisateur' => @$this->typeutilisateur->libelle,
+            'value'     => $this->id,
+            'label'     => $this->name,
         ];
     }
 }

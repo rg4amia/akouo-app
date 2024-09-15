@@ -3,6 +3,8 @@ import HeaderShow from "@/Components/HeaderShow";
 import Header from "@/Components/Header";
 import Sidebar from "@/Components/SideBar";
 import ellipse from '../../../public/assets/img/ellipse.png';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function BaseLayout({children , state, auth}) {
 
@@ -22,6 +24,7 @@ export default function BaseLayout({children , state, auth}) {
                 <HeaderShow notificationCount={10}/>}
                 <main>
                     {children}
+                    <ToastContainer />
                     <Footer/>
                 </main>
             </div>

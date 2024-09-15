@@ -22,6 +22,7 @@ class UserStoreRequest extends FormRequest
      */
     public function rules(): array
     {
+      //  dd($this->request);
         return [
             'nom' => 'required',
             'prenoms' => 'required',
@@ -35,7 +36,7 @@ class UserStoreRequest extends FormRequest
             'status_user_id' => 'required|integer',
             'affecter_entite' => 'required',
             'cellule_id' => 'required|integer',
-            'photo' => 'required|file|max:2024|mimes:png,jpg,jpeg'
+            'photo' => 'nullable|max:2024|image|mimes:png,jpg,jpeg',
         ];
     }
 
@@ -66,8 +67,9 @@ class UserStoreRequest extends FormRequest
             'affecter_entite.integer' => "L'identifiant de l'affectation doit être un nombre entier.",
             'cellule_id.required' => "L'identifiant de la cellule est obligatoire.",
             'cellule_id.integer' => "L'identifiant de la cellule doit être un nombre entier.",
-            'photo' => 'Taille maximale de la photo est 2Mo',
-            'photo.mimes' => 'Respecter les format (png,jpg,jpeg)'
+            'photo.max' => 'Taille maximale de la photo est 2Mo',
+            'photo.required' => 'La photo est obligatoire',
+            'photo.mimes' => 'Respecter les format (png,jpg,jpeg)',
         ];
     }
 }

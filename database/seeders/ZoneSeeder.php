@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Rattachement;
+use App\Models\Zone;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class RattachementSeeder extends Seeder
+class ZoneSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,19 +15,24 @@ class RattachementSeeder extends Seeder
     {
         $data = [
             [
-                'libelle' => 'Assemblé afrique'
+                'libelle' => 'Abidjan'
             ],
             [
-                'libelle' => 'Assemblé europe'
+                'libelle' => 'Bouaké'
             ],
             [
-                'libelle' => 'Assemblé asie'
+                'libelle' => 'Yamoussoukro'
+            ],
+            [
+                'libelle' => 'Paris'
+            ],
+            [
+                'libelle' => 'Génève'
             ]
         ];
 
         foreach ($data as $item) {
-            Rattachement::create($item);
+            Zone::create($item);
         }
-
     }
 }

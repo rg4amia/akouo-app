@@ -24,6 +24,7 @@ class EntiteFullResource extends JsonResource
             'zone' => @$this->zone->libelle,
             'link_maps' => @$this->link_maps,
             'entite_origine' => @$this->entite_origine->libelle,
+            'useraffecte' => @$this->users->pluck('name')->toArray(),
         ];
     }
 }
