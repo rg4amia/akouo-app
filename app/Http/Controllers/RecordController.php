@@ -14,7 +14,6 @@ class RecordController extends Controller
      */
     public function index()
     {
-        //$record = RecordAudio::orderBy('id', 'DESC')->get();
         $record = RecordAudioResource::collection(RecordAudio::orderBy('id', 'DESC')->get());
 
         return Inertia::render('Record/Index', [

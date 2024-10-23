@@ -8,9 +8,51 @@ import makeAnimated from "react-select/animated";
 import Select from "react-select";
 import ButtonStandard from "@/Components/ButtonStandard";
 import { toast } from "react-toastify";
+import DataTable from "./Partials/DataTableEntite";
 
 
 export default function EntiteIndex({ props, auth }) {
+
+    /* data table init */
+
+     const {
+        data: entite,
+        type_entites,
+        rattachements,
+        pays,
+        entites,
+        filters,
+        users,
+        zones
+     } = usePage().props;
+
+     const columns = [
+         { key: "id", label: "ID", sortable: true },
+         { key: "libelle", label: "Libelle", sortable: true },
+         { key: "rattachement", label: "Rattachement", sortable: true },
+         { key: "pays", label: "Pays", sortable: true },
+         { key: "typeentite", label: "Type Entité", sortable: true },
+         { key: "zone", label: "Zone", sortable: true },
+         { key: "link_maps", label: "Link maps", sortable: true },
+         { key: "entite_origine", label: "Entite Origine", sortable: true },
+         { key: "useraffecte", label: "Affecté", sortable: true },
+         { key: "created_at", label: "Created At", sortable: true },
+         { key: "updated_at", label: "Updated At", sortable: true },
+     ];
+
+      const handleBulkAction = async (action, selectedIds) => {
+          try {
+             await post(route("entite.bulkAction"), {
+                  action,
+                  ids: selectedIds,
+              });
+              // Optionally, you can add a success message here
+          } catch (error) {
+              console.error("Bulk action failed:", error);
+              // Optionally, you can add an error message here
+          }
+      };
+
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     /* Select 2 Multi */
@@ -19,19 +61,6 @@ export default function EntiteIndex({ props, auth }) {
     const openModal = () => {
         setIsModalOpen(true);
     };
-
-    const {
-        data: entite,
-        type_entites,
-        entites,
-        rattachements,
-        pays,
-        meta,
-        users,
-        zones,
-        filtered,
-        attributes,
-    } = usePage().props.entites;
 
     const closeModal = () => {
         setIsModalOpen(false);
@@ -48,23 +77,7 @@ export default function EntiteIndex({ props, auth }) {
         link_maps: "",
     });
 
-    const [state, setState] = useState(true);
-
-    const [params, setParams] = useState(filtered);
-    const [pageNumber, setPageNumber] = useState([]);
-
-    useEffect(() => {
-        let numbers = [];
-        for (
-            //attributes
-            let i = attributes.per_page;
-            i <= meta.total / attributes.per_page;
-            i = i + attributes.per_page
-        ) {
-            numbers.push(i);
-        }
-        setPageNumber(numbers);
-    }, []);
+    const [state] = useState(true);
 
     /* Flash Message */
     const { flash } = usePage().props;
@@ -87,10 +100,6 @@ export default function EntiteIndex({ props, auth }) {
                 closeModal();
             },
         });
-    };
-
-    const handledSearch = (e) => {
-        get(route("entite.index"));
     };
 
     return (
@@ -144,7 +153,7 @@ export default function EntiteIndex({ props, auth }) {
                         className="w-[400px] px-10 py-2 border border-stokelightblue rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E1EFFC]"
                     />
 
-                    <div className="absolute inset-y-0 flex items-center pl-3 pointer-events-none">
+                    <div className="inset-y-0 top-0 flex items-center pl-3 pointer-events-none left-10">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="size-5 text-grayDescription"
@@ -235,149 +244,61 @@ export default function EntiteIndex({ props, auth }) {
                             />
                         </svg>
                     </div>
-
-                    <table className="min-w-full mt-1 bg-white border-t">
-                        <thead>
-                            <tr className="text-xs border-b">
-                                <th className="px-6 py-3 text-left border-r">
-                                    Nom entité
-                                </th>
-                                <th className="px-6 py-3 text-left border-r">
-                                    Pays
-                                </th>
-                                <th className="px-6 py-3 text-left border-r">
-                                    Zone
-                                </th>
-                                <th className="px-6 py-3 text-left border-r">
-                                    Type d’entité
-                                </th>
-                                <th className="px-6 py-3 text-left border-r">
-                                    Affichage nom
-                                </th>
-                                <th className="px-6 py-3 text-left border-r">
-                                    Rattachement
-                                </th>
-                                <th className="px-6 py-3 text-left border-r">
-                                    Affectation(s)
-                                </th>
-                                <th className="px-6 py-3 text-left border-r">
-                                    Action
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody className="text-xs text-gray-600">
-                            {entite.map((entite, index) => (
-                                <tr className="" key={index}>
-                                    <td className="px-6 py-1 border">
-                                        <b>{entite.libelle}</b>
-                                    </td>
-                                    <td className="px-6 py-1 border">
-                                        <div className="">{entite.pays}</div>
-                                    </td>
-                                    <td className="px-6 py-1 border">
-                                        <div className="">{entite.zone}</div>
-                                    </td>
-                                    <td className="px-6 py-1 border">
-                                        <div className="relative rounded bg-greenVh w-full overflow-hidden flex flex-row items-center justify-center py-1 px-2 box-border text-left text-[10px] text-white font-outfit">
-                                            <b className="relative">
-                                                {entite.typeentite}
-                                            </b>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-1 border">
-                                        <div className="w-full relative box-border h-[79px] flex flex-col items-center justify-center p-3 text-left text-[10px] text-black font-outfit">
-                                            <b className="relative">
-                                                {entite.typeentite}
-                                            </b>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-1 border">
-                                        <div className="relative text-[10px] font-semibold font-outfit text-gray-mid-description text-left">
-                                            {entite.rattachement}
-                                        </div>
-                                    </td>
-
-                                    <td className="px-6 py-1 border">
-                                        {entite.useraffecte.length > 0 ? (
-                                            <ul>
-                                                {entite.useraffecte.map(
-                                                    (name, index) => (
-                                                        <li
-                                                            className="flex items-center justify-center py-1 mt-1 rounded-md bg-bg"
-                                                            key={index}
-                                                        >
-                                                            {name}
-                                                        </li>
-                                                    )
-                                                )}
-                                            </ul>
-                                        ) : (
-                                            <p>Aucune entité affectée.</p>
-                                        )}
-                                    </td>
-                                    <td className="border">
-                                        <Link
-                                            href={route("entite.show", entite)}
-                                            as="button"
-                                            className="w-full relative box-border h-[79px] flex flex-row items-center justify-center py-3 px-4 gap-2 text-center text-xs text-blackish font-outfit-semibold-12"
-                                        >
-                                            <div
-                                                className="rounded-lg bg-white border-stroke-bulto border-[2px] border-solid flex flex-row items-center justify-center p-1 gap-1 cursor-pointer"
-                                                id="pDFButtonContainer"
-                                            >
-                                                <img
-                                                    className="relative w-4 h-4 overflow-hidden shrink-0"
-                                                    alt=""
-                                                    src="./assets/icons/eye.svg"
-                                                />
-                                                <div className="w-[23px] relative font-semibold hidden">
-                                                    Voir
-                                                </div>
-                                            </div>
-                                            <div className="relative text-[10px] font-semibold text-gray-description text-left">
-                                                Voir
-                                            </div>
-                                        </Link>
-                                    </td>
-                                </tr>
-                            ))}
-                            {/* Additional rows can be added similarly */}
-                        </tbody>
-                    </table>
+                    <DataTable
+                        data={entites.data}
+                        columns={columns}
+                        meta={entites}
+                        filters={filters}
+                        onSort={(column, direction) => {
+                            get(
+                                route("entite.index"),
+                                {
+                                    ...filters,
+                                    sort_by: column,
+                                    sort_direction: direction,
+                                },
+                                { preserveState: true }
+                            );
+                        }}
+                        onSearch={(term) => {
+                            get(
+                                route("entite.index"),
+                                {
+                                    ...filters,
+                                    search: term,
+                                },
+                                { preserveState: true }
+                            );
+                        }}
+                        onPageChange={(page) => {
+                            get(
+                                route("entite.index"),
+                                {
+                                    ...filters,
+                                    page,
+                                },
+                                { preserveState: true }
+                            );
+                        }}
+                        onPerPageChange={(perPage) => {
+                            get(
+                                route("entite.index"),
+                                {
+                                    ...filters,
+                                    per_page: perPage,
+                                },
+                                { preserveState: true }
+                            );
+                        }}
+                        bulkActions={[
+                            { label: "Delete", action: "delete" },
+                            { label: "Activate", action: "activate" },
+                            { label: "Deactivate", action: "deactivate" },
+                        ]}
+                        onBulkAction={handleBulkAction}
+                    />
                 </div>
-                {/* Footer */}
-                <div className="flex items-center justify-between mt-4">
-                    <nav className="flex items-center">
-                        {meta.links.map((link, index) => (
-                            <Link
-                                key={index}
-                                href={link.url || "#"}
-                                className={`px-3 py-2 mx-1 text-sm font-medium rounded-lg ${
-                                    link.active
-                                        ? "bg-green-vh text-white"
-                                        : "bg-white text-gray-700 hover:bg-gray-50"
-                                } ${
-                                    !link.url &&
-                                    "pointer-events-none opacity-50"
-                                }`}
-                                dangerouslySetInnerHTML={{ __html: link.label }}
-                            />
-                        ))}
-                    </nav>
-                    <div className="flex items-center">
-                        <select
-                            id="load"
-                            name="load"
-                            onChange={onChange}
-                            value={params.load}
-                            className="block w-full py-2 pl-3 pr-10 text-base border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                        >
-                            {pageNumber.map((page, index) => (
-                                <option key={index}>{page}</option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
+
             </div>
 
             {/* start modal */}

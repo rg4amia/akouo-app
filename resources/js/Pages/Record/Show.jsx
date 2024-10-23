@@ -1,8 +1,4 @@
-import Sidebar from "@/Components/SideBar";
-import Header from "@/Components/Header";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link, usePage } from "@inertiajs/react";
-import Footer from "@/Components/Footer";
+import { Head } from "@inertiajs/react";
 import { useState } from "react";
 import BaseLayout from "@/Layouts/BaseLayout";
 import ellipse from '../../../../public/assets/img/ellipse.png';
@@ -13,18 +9,19 @@ import response from '../../../../public/assets/icons/response.svg';
 
 export default function RecordDetails({ auth, record }) {
 
-    const [state, setState] = useState(false);
+    const [state] = useState(false);
 
     return (
         <BaseLayout state={state} auth={auth}>
+
             <Head title={"Detail Entegistrement"} />
 
             <div className="flex flex-col items-start m-4">
                 <div className="flex items-start">
                         {/* User Profile */}
-                        <div className="flex items-center gap-3 border-r pr-8">
+                        <div className="flex items-center gap-3 pr-8 border-r">
                             <img
-                                className="w-10 h-10 object-cover"
+                                className="object-cover w-10 h-10"
                                 alt="Ellipse"
                                 src={ellipse}
                             />
@@ -60,7 +57,7 @@ export default function RecordDetails({ auth, record }) {
                         <div className="flex items-center">
                             <img
                                 className="w-5 h-5 mr-2"
-                                src={messageDetail}
+                                src={messageDetail} alt=""
                             />
                             <p className="text-greenVh">
                                 Descriptif enregistreur
@@ -238,7 +235,7 @@ export default function RecordDetails({ auth, record }) {
                             >
                                 Commentaires
                             </label>
-                            <div className="w-full p-3 bg-light-gray-bg rounded-lg">
+                            <div className="w-full p-3 rounded-lg bg-light-gray-bg">
                                 <textarea
                                     className="w-[900px] border-inherit h-[76px] p-0 text-[14px] font-medium text-gray-mid-description bg-transparent resize-none border-none"
                                     placeholder="Le verset n'est pas trop clair. Mieux préciser le verset de base."
@@ -294,7 +291,7 @@ export default function RecordDetails({ auth, record }) {
                                 </p>
                             </div>
 
-                            <div className="relative w-full flex flex-row items-start justify-start gap-10 ml-10 mt-4 text-left text-base text-black font-outfit">
+                            <div className="relative flex flex-row items-start justify-start w-full gap-10 mt-4 ml-10 text-base text-left text-black font-outfit">
                                 <div className="w-0.5 relative bg-light-gray h-[276px]"></div>
                                 <div className="flex flex-col items-start justify-start gap-3">
                                     <div className="shadow-[0px_4px_12px_rgba(0,_0,_0,_0.1)] rounded-lg bg-white flex flex-col items-start justify-start p-6 gap-3">

@@ -20,6 +20,7 @@ use App\Models\User;
 use App\Models\Zone;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class EntiteController extends Controller
 {
@@ -51,6 +52,84 @@ class EntiteController extends Controller
         return Inertia::render('Entite/Index', [
             'entites' => $entites
         ]);
+    }
+
+    /* public function index(Request $request)
+    {
+        $query = Entite::query();
+
+        // Apply search filter
+        if ($request->has('search')) {
+            $searchTerm = $request->input('search');
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', "%{$searchTerm}%")
+                ->orWhere('description', 'like', "%{$searchTerm}%")
+                ->orWhere('status', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        // Apply sorting
+        $sortBy = $request->input('sort_by', 'id');
+        $sortDirection = $request->input('sort_direction', 'asc');
+        $query->orderBy($sortBy, $sortDirection);
+
+        // Pagination
+        $perPage = $request->input('per_page', 10);
+        $entites = $query->paginate($perPage);
+
+        return Inertia::render('Entite/Index', [
+            'entites' => [
+                'data' => $entites->items(),
+                'current_page' => $entites->currentPage(),
+                'per_page' => $entites->perPage(),
+                'last_page' => $entites->lastPage(),
+                'total' => $entites->total(),
+                'sort_by' => $sortBy,
+                'sort_direction' => $sortDirection,
+                'pays'              => (PaysResource::collection(Pays::all())),
+                'type_entites'      => (TypeEntiteResource::collection(TypeEntite::all())),
+                'entites'           => (EntiteResource::collection(Entite::all())),
+                'rattachements'     => (RattachementResource::collection(Rattachement::all())),
+                'users'             => (UserResource::collection(User::where('id', '!=', 1)->get())),
+                'zones'             => (ZoneResource::collection(Zone::all())),
+            ],
+            'filters' => $request->only(['search', 'sort_by', 'sort_direction', 'per_page']),
+        ]);
+    } */
+
+    public function bulkAction(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'action' => 'required|string|in:delete,activate,deactivate',
+            'ids' => 'required|array',
+            'ids.*' => 'exists:entites,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $action = $request->input('action');
+        $ids = $request->input('ids');
+
+        switch ($action) {
+            case 'delete':
+                Entite::whereIn('id', $ids)->delete();
+                $message = 'Entities deleted successfully';
+                break;
+            case 'activate':
+                Entite::whereIn('id', $ids)->update(['status' => 'active']);
+                $message = 'Entities activated successfully';
+                break;
+            case 'deactivate':
+                Entite::whereIn('id', $ids)->update(['status' => 'inactive']);
+                $message = 'Entities deactivated successfully';
+                break;
+            default:
+                return response()->json(['message' => 'Invalid action'], 400);
+        }
+
+        return response()->json(['message' => $message]);
     }
 
     /**

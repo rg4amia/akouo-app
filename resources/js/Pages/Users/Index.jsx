@@ -17,8 +17,6 @@ import EyeIcon from "../../../../public/assets/icons/eye.svg";
 import { toast } from "react-toastify";
 
 export default function UserIndex({ props, auth }) {
-    /* Sweet alert Config */
-    const MySwal = withReactContent(Swal);
 
     /* Select 2 Multi */
     const animatedComponents = makeAnimated();
@@ -37,7 +35,7 @@ export default function UserIndex({ props, auth }) {
     }
 
     //template header
-    const [state, setState] = useState(true);
+    const [state] = useState(true);
 
     const {
         data: people,
@@ -50,7 +48,6 @@ export default function UserIndex({ props, auth }) {
         entites,
         cellules,
         status_users,
-        affectes,
     } = usePage().props.users;
 
     /* Flash Message */
@@ -80,16 +77,6 @@ export default function UserIndex({ props, auth }) {
         cellule_id: "",
         photo: [],
     });
-    /*  const reload = useCallback(
-        debounce((query) => {
-            get(route("user.index"), pickBy(query), {
-                preserveState: true,
-            });
-        }, 90050),
-        []
-    ); */
-
-    //useEffect(() => reload(params), [params]);
 
     useEffect(() => {
         let numbers = [];
@@ -122,8 +109,7 @@ export default function UserIndex({ props, auth }) {
     };
 
     const handledSearch = (e) => {
-        //get(route("user.index", e.target.value));
-        //console.log(e.target.value);
+       // get(route("user.index", e.target.value));
     };
 
     /* Function d'ajout d'utilisateur */
@@ -133,7 +119,6 @@ export default function UserIndex({ props, auth }) {
             onSuccess: (e) => {
                 reset([]);
                 closeModal();
-               // e.props.flash.success && toast.success(e.props.flash.success);
             },
         });
     };
@@ -141,29 +126,13 @@ export default function UserIndex({ props, auth }) {
     return (
         <BaseLayout state={state} auth={auth}>
             <Head title="Gestion des Utilisateurs" />
-            {/*  {stateSuccess && (
-                <div className="bg-green-100 border-lb-4 border-green-500 text-green-700 p-4 mb-4">
-                    <p>{stateSuccess}</p>
-                </div>
-            )}
-
-            {stateError && (
-                <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
-                    <p>{stateError}</p>
-                </div>
-            )}
-            {stateInfo && (
-                <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4">
-                    <p>{stateInfo}</p>
-                </div>
-            )} */}
 
             <div className="flex flex-col items-start m-4" role="group">
-                <div className="flex flex-row justify-between items-center w-full">
+                <div className="flex flex-row items-center justify-between w-full">
                     <div>
-                        <div className="font-outfit text-2xl font-semibold flex items-center">
+                        <div className="flex items-center text-2xl font-semibold font-outfit">
                             <svg
-                                className="h-5 w-5 mr-2 fill-blueVh size-6"
+                                className="w-5 h-5 mr-2 fill-blueVh size-6"
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24"
                                 fill="currentColor"
@@ -185,7 +154,7 @@ export default function UserIndex({ props, auth }) {
                             <div className="flex flex-row items-center justify-start gap-2">
                                 <div className="bg-white rounded-md">
                                     <img
-                                        className="w-5 relative h-5 overflow-hidden shrink-0"
+                                        className="relative w-5 h-5 overflow-hidden shrink-0"
                                         alt=""
                                         src="./assets/icons/btn_icon_users.svg"
                                     />
@@ -199,7 +168,7 @@ export default function UserIndex({ props, auth }) {
                 </div>
 
                 {/* Champ Recherche des utilisateurs */}
-                <div className="relative font-outfit mt-3 mb-3 flex">
+                <div className="relative flex mt-3 mb-3 font-outfit">
                     <input
                         type="text"
                         id="search"
@@ -208,7 +177,7 @@ export default function UserIndex({ props, auth }) {
                         className="w-[400px] px-10 py-2 border border-stokelightblue rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E1EFFC]"
                         onChange={handledSearch}
                     />
-                    <div className="absolute inset-y-0 left-0 pl-3 top-0 flex items-center pointer-events-none">
+                    <div className="absolute inset-y-0 top-0 left-0 flex items-center pl-3 pointer-events-none">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="size-5 text-grayDescription"
@@ -293,39 +262,39 @@ export default function UserIndex({ props, auth }) {
                         </svg>
                     </div>
 
-                    <table className="min-w-full bg-white border-t mt-1">
+                    <table className="min-w-full mt-1 bg-white border-t">
                         <thead>
                             <tr className="text-xs border-b">
-                                <th className="py-3 px-6 text-left border-r">
+                                <th className="px-6 py-3 text-left border-r">
                                     NOM, Prénoms
                                 </th>
-                                <th className="py-3 px-6 text-left border-r">
+                                <th className="px-6 py-3 text-left border-r">
                                     Pays
                                 </th>
-                                <th className="py-3 px-6 text-left border-r">
+                                <th className="px-6 py-3 text-left border-r">
                                     Cellule
                                 </th>
-                                <th className="py-3 px-6 text-left border-r">
+                                <th className="px-6 py-3 text-left border-r">
                                     Type d’utilisateur
                                 </th>
-                                <th className="py-3 px-6 text-left border-r">
+                                <th className="px-6 py-3 text-left border-r">
                                     Catégorie utilisateur
                                 </th>
-                                <th className="py-3 px-6 text-left border-r">
+                                <th className="px-6 py-3 text-left border-r">
                                     Entité(s) affectée(s)
                                 </th>
-                                <th className="py-3 px-6 text-left border-r">
+                                <th className="px-6 py-3 text-left border-r">
                                     Décision
                                 </th>
-                                <th className="py-3 px-6 text-left border-r">
+                                <th className="px-6 py-3 text-left border-r">
                                     Action
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="text-gray-600 text-xs">
+                        <tbody className="text-xs text-gray-600">
                             {people.map((user, index) => (
                                 <tr className="" key={index}>
-                                    <td className="py-1 px-2 border">
+                                    <td className="px-2 py-1 border">
                                         <div className="w-full relative border-neutral-600 box-border h-[79px] flex flex-row items-center justify-start p-3 gap-2 text-left text-3xs text-gray-description">
                                             {/*  <div className="w-10 relative rounded-[50%] bg-lightgray h-10"> */}
 
@@ -360,75 +329,62 @@ export default function UserIndex({ props, auth }) {
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="py-1 px-2 border">
+                                    <td className="px-2 py-1 border">
                                         <span className="font-medium">
                                             {" "}
                                             {user.pays}
                                         </span>
                                     </td>
-                                    <td className="py-1 px-6 border">
+                                    <td className="px-6 py-1 border">
                                         <div className="rounded bg-bg text-greenVh overflow-hidden flex flex-row items-center justify-center py-1 px-2 gap-2.5">
                                             <div className="relative font-semibold">
                                                 {user.cellule}
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="py-1 px-6 border">
-                                        <div className="rounded-md bg-bg flex items-center justify-center py-1">
+                                    <td className="px-6 py-1 border">
+                                        <div className="flex items-center justify-center py-1 rounded-md bg-bg">
                                             {user.typeutilisateur}
                                         </div>
                                     </td>
-                                    <td className="py-1 px-6 border">
-                                        <div className="rounded-md bg-bg flex items-center justify-center py-1">
+                                    <td className="px-6 py-1 border">
+                                        <div className="flex items-center justify-center py-1 rounded-md bg-bg">
                                             {user.categorie}
                                         </div>
                                     </td>
-                                    <td className="py-1 px-6 border">
-                                        {user.entiteaffecte.length > 0 ? (
-                                            <ul>
-                                                {user.entiteaffecte.map(
-                                                    (entite, index) => (
-                                                        <li
-                                                            className="rounded-md bg-bg flex items-center justify-center py-1 mt-1"
-                                                            key={index}
-                                                        >
-                                                            {entite}
-                                                        </li>
-                                                    )
-                                                )}
-                                            </ul>
-                                        ) : (
-                                            <p>Aucune entité affectée.</p>
-                                        )}
+                                    <td className="px-6 py-1 border">
+                                        <div className="flex flex-row justify-center py-1 rounded-md flex-items-center bg-bg">
+                                            {user.entiteaffecte.length > 0
+                                                ? user.entiteaffecte.join(
+                                                      " || "
+                                                  )
+                                                : "Aucune entité affectée."}
+                                        </div>
                                     </td>
-                                    <td className="py-1 px-6 border">
+                                    <td className="px-6 py-1 border">
                                         <div
-                                            className={`${
-                                                user.statususer === "Validé"
-                                                    ? "bg-greenVh"
-                                                    : user.statususer ===
-                                                      "En attente"
-                                                    ? "bg-yellowVh"
-                                                    : user.statususer ===
-                                                      "Rejeté"
-                                                    ? "bg-redVh"
-                                                    : ""
-                                            } rounded-md text-white flex items-center justify-center py-1 px-1.5 mt-1`}
+                                            className={`rounded-md text-white text-[10px] flex items-center justify-center py-1 px-1.5 mt-1 ${
+                                                {
+                                                    Validé: "bg-greenVh",
+                                                    "En attente": "bg-yellowVh",
+                                                    Rejeté: "bg-redVh",
+                                                }[user.statususer] || ""
+                                            }`}
                                         >
                                             <div className="relative font-semibold">
                                                 {user.statususer}
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="py-1 px-6 border">
-                                        <div className="relative border-neutral-600 h-[79px] flex flex-row items-center justify-start py-3 px-4 gap-2 text-center text-xs text-blackish font-outfit-semibold-12">
+                                    <td className="px-6 py-1 border">
+                                        <div className="relative border-neutral-600 h-[70px] flex flex-row items-center justify-start py-2 px-2 gap-2 text-center text-xs text-blackish font-outfit-semibold-12">
                                             <Link
                                                 href={route("user.show", user)}
                                                 as="button"
                                                 className="cursor-pointer rounded-lg bg-base-white border-stroke-bulto border-[1px] border-solid flex flex-row items-center justify-center p-3 gap-1"
                                             >
                                                 <img
-                                                    className="w-5 relative h-5 overflow-hidden shrink-0"
+                                                    className="relative h-3 overflow-hidden shrink-0"
                                                     alt=""
                                                     src={EyeIcon}
                                                 />
@@ -444,18 +400,13 @@ export default function UserIndex({ props, auth }) {
                                                     )}
                                                     method="delete"
                                                     as="button"
-                                                    className="flex flex-col items-start justify-end gap-2 text-left text-sm text-gray-700 font-text-s-medium"
+                                                    className="p-3 border rounded-lg bg-base-white border-stroke-bulto"
                                                 >
-                                                    <div className="cursor-pointer rounded-lg bg-base-white border-stroke-bulto border-[1px] border-solid flex flex-row items-center justify-center p-3 gap-1">
-                                                        <img
-                                                            className="w-5 relative h-5 overflow-hidden shrink-0"
-                                                            alt=""
-                                                            src={DeleteIcon}
-                                                        />
-                                                    </div>
-                                                    <div className="w-[59px] relative tracking-[-0.1px] leading-[20px] font-medium hidden">
-                                                        Headline
-                                                    </div>
+                                                    <img
+                                                        className="h-3"
+                                                        alt="Supprimer"
+                                                        src={DeleteIcon}
+                                                    />
                                                 </Link>
                                             )}
                                         </div>
@@ -467,24 +418,25 @@ export default function UserIndex({ props, auth }) {
                 </div>
             </div>
 
-            <ul className="flex w-full justify-between items-center gap-x-1 mt-10 p-6">
+            <ul className="flex items-center justify-between w-full p-6 mt-10 gap-x-1">
                 <div className="flex items-center justify-end">
                     {meta.links.map((item, index) => (
                         <Link
-                            disabled={item.url == null ? true : false}
+                            key={item}
+                            disabled={!item.url}
                             as="button"
-                            className={`${
-                                item.url != null
-                                    ? "text-white cursor-default bg-green-vh"
-                                    : "text-gray-800"
-                            } py-[7px] px-3 rounded-lg flex items-center justify-center box-border`}
-                            href={item.url || ""}
+                            className={`py-[7px] px-3 rounded-lg flex items-center justify-center box-border ${
+                                item.url
+                                    ? "text-white cursor-pointer bg-green-vh hover:bg-green-600"
+                                    : "text-gray-400 cursor-not-allowed bg-gray-200"
+                            }`}
+                            href={item.url || "#"}
+                            preserveState
+                            preserveScroll
                         >
                             <span
                                 className="font-semibold border-stroke-bulto"
-                                dangerouslySetInnerHTML={{
-                                    __html: item.label,
-                                }}
+                                dangerouslySetInnerHTML={{ __html: item.label }}
                             />
                         </Link>
                     ))}
@@ -493,12 +445,25 @@ export default function UserIndex({ props, auth }) {
                     <select
                         id="load"
                         name="load"
-                        onChange={onChange}
+                        onChange={(e) => {
+                            const newLoad = e.target.value;
+                            router.get(
+                                route("users.index"),
+                                { load: newLoad },
+                                {
+                                    preserveState: true,
+                                    preserveScroll: true,
+                                    replace: true,
+                                }
+                            );
+                        }}
                         value={params.load}
-                        className="rounded-xl border-stroke-bulto"
+                        className="p-2 rounded-xl border-stroke-bulto"
                     >
                         {pageNumber.map((page, index) => (
-                            <option key={index}>{page}</option>
+                            <option key={index} value={page}>
+                                {page}
+                            </option>
                         ))}
                     </select>
                 </div>
@@ -508,9 +473,9 @@ export default function UserIndex({ props, auth }) {
             {isModalOpen && (
                 <div
                     id="userModal"
-                    className="fixed z-50 inset-0 bg-gray-900 bg-opacity-30 backdrop-blur-sm overflow-y-auto h-full px-4"
+                    className="fixed inset-0 z-50 h-full px-4 overflow-y-auto bg-gray-900 bg-opacity-30 backdrop-blur-sm"
                 >
-                    <div className="relative top-3 mx-auto shadow-xl rounded-3xl  bg-white w-1/3">
+                    <div className="relative w-1/3 mx-auto bg-white shadow-xl top-3 rounded-3xl">
                         <div className="flex justify-end p-2">
                             <button
                                 id="closeModal"
@@ -555,7 +520,7 @@ export default function UserIndex({ props, auth }) {
                                 </div>
 
                                 {/* Form Fields */}
-                                <div className="flex flex-col text-gray gap-3 gap-x-1">
+                                <div className="flex flex-col gap-3 text-gray gap-x-1">
                                     {/* Profile Input Image */}
                                     <div className="flex flex-row items-center justify-center relative gap-2.5">
                                         <label
@@ -563,7 +528,7 @@ export default function UserIndex({ props, auth }) {
                                             className="cursor-pointer"
                                         >
                                             <img
-                                                className="w-20 h-20 z-0 object-cover rounded-full"
+                                                className="z-0 object-cover w-20 h-20 rounded-full"
                                                 alt="Profile"
                                                 src={
                                                     uploadedFileURL ||
@@ -571,7 +536,7 @@ export default function UserIndex({ props, auth }) {
                                                 } // Show uploaded file or default profile image
                                             />
                                             <img
-                                                className="w-8 h-8 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                                                className="absolute w-8 h-8 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none top-1/2 left-1/2"
                                                 alt="Camera Icon"
                                                 src="./assets/icons/camera-alt.svg"
                                             />
@@ -591,7 +556,7 @@ export default function UserIndex({ props, auth }) {
                                     />
 
                                     {/*  Name and Surname */}
-                                    <div className="flex flex-row gap-3 w-full">
+                                    <div className="flex flex-row w-full gap-3">
                                         <div className="flex flex-col gap-1">
                                             <label
                                                 htmlFor="nom"
@@ -646,7 +611,7 @@ export default function UserIndex({ props, auth }) {
 
                                     {/* User Type and Category */}
                                     <div className="flex flex-row gap-3">
-                                        <div className="flex flex-col gap-1 w-full">
+                                        <div className="flex flex-col w-full gap-1">
                                             <label
                                                 htmlFor="typeUtilisateur"
                                                 className="font-bold"
@@ -675,7 +640,7 @@ export default function UserIndex({ props, auth }) {
                                             />
                                         </div>
 
-                                        <div className="flex flex-col gap-1 w-full">
+                                        <div className="flex flex-col w-full gap-1">
                                             <label
                                                 htmlFor="categorieUtilisateur"
                                                 className="font-bold"
@@ -781,7 +746,7 @@ export default function UserIndex({ props, auth }) {
                                     {/*  Country, Origin Entity, Cell, Assigned Entities, and Status */}
 
                                     <div className="flex flex-row gap-3">
-                                        <div className="flex flex-col gap-1 w-full">
+                                        <div className="flex flex-col w-full gap-1">
                                             <label
                                                 htmlFor="pays"
                                                 className="font-bold"
@@ -801,7 +766,7 @@ export default function UserIndex({ props, auth }) {
                                             />
                                         </div>
 
-                                        <div className="flex flex-col gap-1 w-full">
+                                        <div className="flex flex-col w-full gap-1">
                                             <label
                                                 htmlFor="entiteOrigine"
                                                 className="font-bold"
@@ -830,7 +795,7 @@ export default function UserIndex({ props, auth }) {
                                     </div>
 
                                     <div className="flex flex-row gap-3">
-                                        <div className="flex flex-col gap-1 w-full">
+                                        <div className="flex flex-col w-full gap-1">
                                             <label
                                                 htmlFor="cellule"
                                                 className="font-bold"
@@ -854,7 +819,7 @@ export default function UserIndex({ props, auth }) {
                                             />
                                         </div>
 
-                                        <div className="flex flex-col gap-1 w-full">
+                                        <div className="flex flex-col w-full gap-1">
                                             <label
                                                 htmlFor="statut"
                                                 className="font-bold"
@@ -864,7 +829,7 @@ export default function UserIndex({ props, auth }) {
                                             <SelectOption
                                                 name="status_user_id"
                                                 placeholder="Selectionner statut"
-                                                className="rounded-lg border-2 border-stroke-bulto p-2"
+                                                className="p-2 border-2 rounded-lg border-stroke-bulto"
                                                 options={status_users}
                                                 error={errors.status_user_id}
                                                 onChange={(e) =>
@@ -883,7 +848,7 @@ export default function UserIndex({ props, auth }) {
 
                                     <div className="flex flex-col">
                                         <div className="flex flex-row gap-3">
-                                            <div className="flex flex-col gap-1 w-full">
+                                            <div className="flex flex-col w-full gap-1">
                                                 <label
                                                     htmlFor="entitesAffectees"
                                                     className="font-bold"
@@ -909,7 +874,7 @@ export default function UserIndex({ props, auth }) {
                                                             value
                                                         )
                                                     }
-                                                    className="rounded-lg border-2 border-stroke-bulto p-1"
+                                                    className="p-1 border-2 rounded-lg border-stroke-bulto"
                                                 />
                                                 <InputError
                                                     message={

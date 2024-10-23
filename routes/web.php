@@ -22,9 +22,9 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('record', RecordController::class);
     Route::resource('user', UserController::class);
-    Route::resource('entite', EntiteController::class);
     Route::resource('parametre', ParametreController::class);
-    Route::resource('role', RolePermissionController::class);
+    Route::resource('entite', EntiteController::class);
+    Route::post('/entites/bulk-action', [EntiteController::class, 'bulkAction'])->name('entites.bulkAction');
 });
 
 Route::get('/dashboard', [DashBoardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');

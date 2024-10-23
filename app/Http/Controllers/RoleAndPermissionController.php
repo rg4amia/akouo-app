@@ -9,7 +9,7 @@ use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
-class RolePermissionController extends Controller
+class RoleAndPermissionController extends Controller
 {
 
     /**
@@ -20,10 +20,10 @@ class RolePermissionController extends Controller
         $roles = (RoleResource::collection(Role::all()));
         $permissions  = (PermissionResource::collection(Permission::all()));
 
-        return Inertia::render('RolePermission/Index',[
-                'roles' => $roles ,
-                'permissions' => $permissions
-            ]);
+        return  Inertia::render('RolePermission/Index',[
+                    'roles' => $roles ,
+                    'permissions' => $permissions
+                ]);
     }
 
     /**
