@@ -1,16 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import BaseLayout from "@/Layouts/BaseLayout";
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
-import { debounce, pickBy } from "lodash";
 import ellipse from "../../../../public/assets/img/ellipse.png";
 import SelectOption from "@/Components/SelectOption";
 import TextInput from "@/Components/TextInput";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import ButtonStandard from "@/Components/ButtonStandard";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
-import FlashMessage from "@/Components/FlashMessage";
 import InputError from "@/Components/InputError";
 import DeleteIcon from "../../../../public/assets/icons/delete.svg";
 import EyeIcon from "../../../../public/assets/icons/eye.svg";
@@ -88,7 +84,6 @@ export default function UserIndex({ props, auth }) {
             numbers.push(i);
         }
         setPageNumber(numbers);
-        //MySwal.fire('mess')
     }, []);
 
     const onChange = (event) =>
@@ -128,11 +123,11 @@ export default function UserIndex({ props, auth }) {
             <Head title="Gestion des Utilisateurs" />
 
             <div className="flex flex-col items-start m-4" role="group">
-                <div className="flex flex-row items-center justify-between w-full">
+                <div className="flex flex-row justify-between items-center w-full">
                     <div>
                         <div className="flex items-center text-2xl font-semibold font-outfit">
                             <svg
-                                className="w-5 h-5 mr-2 fill-blueVh size-6"
+                                className="mr-2 w-5 h-5 fill-blueVh size-6"
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24"
                                 fill="currentColor"
@@ -151,10 +146,10 @@ export default function UserIndex({ props, auth }) {
                             id="openModal"
                             onClick={openModal}
                         >
-                            <div className="flex flex-row items-center justify-start gap-2">
+                            <div className="flex flex-row gap-2 justify-start items-center">
                                 <div className="bg-white rounded-md">
                                     <img
-                                        className="relative w-5 h-5 overflow-hidden shrink-0"
+                                        className="overflow-hidden relative w-5 h-5 shrink-0"
                                         alt=""
                                         src="./assets/icons/btn_icon_users.svg"
                                     />
@@ -168,7 +163,7 @@ export default function UserIndex({ props, auth }) {
                 </div>
 
                 {/* Champ Recherche des utilisateurs */}
-                <div className="relative flex mt-3 mb-3 font-outfit">
+                <div className="flex relative mt-3 mb-3 font-outfit">
                     <input
                         type="text"
                         id="search"
@@ -177,7 +172,7 @@ export default function UserIndex({ props, auth }) {
                         className="w-[400px] px-10 py-2 border border-stokelightblue rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E1EFFC]"
                         onChange={handledSearch}
                     />
-                    <div className="absolute inset-y-0 top-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <div className="flex absolute inset-y-0 top-0 left-0 items-center pl-3 pointer-events-none">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             className="size-5 text-grayDescription"
@@ -247,7 +242,7 @@ export default function UserIndex({ props, auth }) {
                     </select>
                     <div className="">
                         <svg
-                            className="w-6 h-6 overflow-hidden shrink-0 size-6"
+                            className="overflow-hidden w-6 h-6 shrink-0 size-6"
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24"
@@ -262,7 +257,7 @@ export default function UserIndex({ props, auth }) {
                         </svg>
                     </div>
 
-                    <table className="min-w-full mt-1 bg-white border-t">
+                    <table className="mt-1 min-w-full bg-white border-t">
                         <thead>
                             <tr className="text-xs border-b">
                                 <th className="px-6 py-3 text-left border-r">
@@ -312,8 +307,8 @@ export default function UserIndex({ props, auth }) {
                                                 />
                                             )}
                                             {/* </div> */}
-                                            <div className="flex flex-row items-start justify-start">
-                                                <div className="flex flex-col items-start justify-start">
+                                            <div className="flex flex-row justify-start items-start">
+                                                <div className="flex flex-col justify-start items-start">
                                                     <b className="relative text-[12px] text-black">
                                                         {user.name}
                                                     </b>
@@ -343,12 +338,12 @@ export default function UserIndex({ props, auth }) {
                                         </div>
                                     </td>
                                     <td className="px-6 py-1 border">
-                                        <div className="flex items-center justify-center py-1 rounded-md bg-bg">
+                                        <div className="flex justify-center items-center py-1 rounded-md bg-bg">
                                             {user.typeutilisateur}
                                         </div>
                                     </td>
                                     <td className="px-6 py-1 border">
-                                        <div className="flex items-center justify-center py-1 rounded-md bg-bg">
+                                        <div className="flex justify-center items-center py-1 rounded-md bg-bg">
                                             {user.categorie}
                                         </div>
                                     </td>
@@ -384,7 +379,7 @@ export default function UserIndex({ props, auth }) {
                                                 className="cursor-pointer rounded-lg bg-base-white border-stroke-bulto border-[1px] border-solid flex flex-row items-center justify-center p-3 gap-1"
                                             >
                                                 <img
-                                                    className="relative h-3 overflow-hidden shrink-0"
+                                                    className="overflow-hidden relative h-3 shrink-0"
                                                     alt=""
                                                     src={EyeIcon}
                                                 />
@@ -400,7 +395,7 @@ export default function UserIndex({ props, auth }) {
                                                     )}
                                                     method="delete"
                                                     as="button"
-                                                    className="p-3 border rounded-lg bg-base-white border-stroke-bulto"
+                                                    className="p-3 rounded-lg border bg-base-white border-stroke-bulto"
                                                 >
                                                     <img
                                                         className="h-3"
@@ -418,8 +413,8 @@ export default function UserIndex({ props, auth }) {
                 </div>
             </div>
 
-            <ul className="flex items-center justify-between w-full p-6 mt-10 gap-x-1">
-                <div className="flex items-center justify-end">
+            <ul className="flex gap-x-1 justify-between items-center p-6 mt-10 w-full">
+                <div className="flex justify-end items-center">
                     {meta.links.map((item, index) => (
                         <Link
                             key={item}
@@ -441,7 +436,7 @@ export default function UserIndex({ props, auth }) {
                         </Link>
                     ))}
                 </div>
-                <div className="flex items-center justify-end">
+                <div className="flex justify-end items-center">
                     <select
                         id="load"
                         name="load"
@@ -473,9 +468,9 @@ export default function UserIndex({ props, auth }) {
             {isModalOpen && (
                 <div
                     id="userModal"
-                    className="fixed inset-0 z-50 h-full px-4 overflow-y-auto bg-gray-900 bg-opacity-30 backdrop-blur-sm"
+                    className="overflow-y-auto fixed inset-0 z-50 px-4 h-full bg-gray-900 bg-opacity-30 backdrop-blur-sm"
                 >
-                    <div className="relative w-1/3 mx-auto bg-white shadow-xl top-3 rounded-3xl">
+                    <div className="relative top-3 mx-auto w-1/3 bg-white rounded-3xl shadow-xl">
                         <div className="flex justify-end p-2">
                             <button
                                 id="closeModal"
@@ -503,7 +498,7 @@ export default function UserIndex({ props, auth }) {
                             <form onSubmit={submit}>
                                 {/* Header */}
                                 <div className="flex flex-col items-start justify-start text-[24px] mb-4">
-                                    <div className="flex flex-row items-center justify-start gap-2">
+                                    <div className="flex flex-row gap-2 justify-start items-center">
                                         <img
                                             className="w-6 h-6"
                                             alt=""
@@ -520,7 +515,7 @@ export default function UserIndex({ props, auth }) {
                                 </div>
 
                                 {/* Form Fields */}
-                                <div className="flex flex-col gap-3 text-gray gap-x-1">
+                                <div className="flex flex-col gap-x-1 gap-3 text-gray">
                                     {/* Profile Input Image */}
                                     <div className="flex flex-row items-center justify-center relative gap-2.5">
                                         <label
@@ -528,7 +523,7 @@ export default function UserIndex({ props, auth }) {
                                             className="cursor-pointer"
                                         >
                                             <img
-                                                className="z-0 object-cover w-20 h-20 rounded-full"
+                                                className="object-cover z-0 w-20 h-20 rounded-full"
                                                 alt="Profile"
                                                 src={
                                                     uploadedFileURL ||
@@ -536,7 +531,7 @@ export default function UserIndex({ props, auth }) {
                                                 } // Show uploaded file or default profile image
                                             />
                                             <img
-                                                className="absolute w-8 h-8 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none top-1/2 left-1/2"
+                                                className="absolute top-1/2 left-1/2 w-8 h-8 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none"
                                                 alt="Camera Icon"
                                                 src="./assets/icons/camera-alt.svg"
                                             />
@@ -556,7 +551,7 @@ export default function UserIndex({ props, auth }) {
                                     />
 
                                     {/*  Name and Surname */}
-                                    <div className="flex flex-row w-full gap-3">
+                                    <div className="flex flex-row gap-3 w-full">
                                         <div className="flex flex-col gap-1">
                                             <label
                                                 htmlFor="nom"
@@ -611,7 +606,7 @@ export default function UserIndex({ props, auth }) {
 
                                     {/* User Type and Category */}
                                     <div className="flex flex-row gap-3">
-                                        <div className="flex flex-col w-full gap-1">
+                                        <div className="flex flex-col gap-1 w-full">
                                             <label
                                                 htmlFor="typeUtilisateur"
                                                 className="font-bold"
@@ -640,7 +635,7 @@ export default function UserIndex({ props, auth }) {
                                             />
                                         </div>
 
-                                        <div className="flex flex-col w-full gap-1">
+                                        <div className="flex flex-col gap-1 w-full">
                                             <label
                                                 htmlFor="categorieUtilisateur"
                                                 className="font-bold"
@@ -746,7 +741,7 @@ export default function UserIndex({ props, auth }) {
                                     {/*  Country, Origin Entity, Cell, Assigned Entities, and Status */}
 
                                     <div className="flex flex-row gap-3">
-                                        <div className="flex flex-col w-full gap-1">
+                                        <div className="flex flex-col gap-1 w-full">
                                             <label
                                                 htmlFor="pays"
                                                 className="font-bold"
@@ -766,7 +761,7 @@ export default function UserIndex({ props, auth }) {
                                             />
                                         </div>
 
-                                        <div className="flex flex-col w-full gap-1">
+                                        <div className="flex flex-col gap-1 w-full">
                                             <label
                                                 htmlFor="entiteOrigine"
                                                 className="font-bold"
@@ -795,7 +790,7 @@ export default function UserIndex({ props, auth }) {
                                     </div>
 
                                     <div className="flex flex-row gap-3">
-                                        <div className="flex flex-col w-full gap-1">
+                                        <div className="flex flex-col gap-1 w-full">
                                             <label
                                                 htmlFor="cellule"
                                                 className="font-bold"
@@ -819,7 +814,7 @@ export default function UserIndex({ props, auth }) {
                                             />
                                         </div>
 
-                                        <div className="flex flex-col w-full gap-1">
+                                        <div className="flex flex-col gap-1 w-full">
                                             <label
                                                 htmlFor="statut"
                                                 className="font-bold"
@@ -829,7 +824,7 @@ export default function UserIndex({ props, auth }) {
                                             <SelectOption
                                                 name="status_user_id"
                                                 placeholder="Selectionner statut"
-                                                className="p-2 border-2 rounded-lg border-stroke-bulto"
+                                                className="p-2 rounded-lg border-2 border-stroke-bulto"
                                                 options={status_users}
                                                 error={errors.status_user_id}
                                                 onChange={(e) =>
@@ -848,7 +843,7 @@ export default function UserIndex({ props, auth }) {
 
                                     <div className="flex flex-col">
                                         <div className="flex flex-row gap-3">
-                                            <div className="flex flex-col w-full gap-1">
+                                            <div className="flex flex-col gap-1 w-full">
                                                 <label
                                                     htmlFor="entitesAffectees"
                                                     className="font-bold"
@@ -874,7 +869,7 @@ export default function UserIndex({ props, auth }) {
                                                             value
                                                         )
                                                     }
-                                                    className="p-1 border-2 rounded-lg border-stroke-bulto"
+                                                    className="p-1 rounded-lg border-2 border-stroke-bulto"
                                                 />
                                                 <InputError
                                                     message={
@@ -885,7 +880,7 @@ export default function UserIndex({ props, auth }) {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="flex flex-row w-full gap-2">
+                                    <div className="flex flex-row gap-2 w-full">
                                         <ButtonStandard
                                             className="text-black bg-gray-100 border-gray-unselected focus:ring-2 focus:ring-[#E1EFFC] hover:bg-gray-200"
                                             disabled={processing}

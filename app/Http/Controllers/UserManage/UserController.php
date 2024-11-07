@@ -19,7 +19,6 @@ class UserController extends Controller
     public function index(){
 
         $users          = User::with('predicateur')->paginate(12);
-        //$typestructures = TypeStructure::where('state',1)->pluck('libelle','id');
         $entites        = Entite::pluck('libelle','id');
         $roles          = Role::all()->pluck('name','id');
 

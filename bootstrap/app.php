@@ -18,7 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         //
-    })
+    })->withCommands([
+        \App\Console\Commands\ConvertAudioCommand::class,
+    ])
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
